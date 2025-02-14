@@ -186,7 +186,7 @@ function Map() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
