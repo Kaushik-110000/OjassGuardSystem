@@ -7,7 +7,6 @@ axios.defaults.withCredentials = true;
 export class Authservice {
   async registerUser(data) {
     try {
-      console.log(data);
       const response = await axios.post(
         `${server.serverUrl}/user/register`,
         data,
@@ -29,7 +28,6 @@ export class Authservice {
   }
   async registerGuard(data) {
     try {
-      console.log(data);
       const response = await axios.post(
         `${server.serverUrl}/guard/register`,
         data,

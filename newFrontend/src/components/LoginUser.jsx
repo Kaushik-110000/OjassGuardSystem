@@ -26,7 +26,6 @@ function LoginUser() {
       await authService.loginUser(formData);
 
       const user = await authService.getCurrentUser();
-      console.log(user);
       
       if (user) {
         dispatch(storeLogin({ userData: user }));

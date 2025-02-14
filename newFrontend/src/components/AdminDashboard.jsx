@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import ManageGuards from "./ManageGuards";
 import { FiLogOut } from "react-icons/fi";
 import authservice from "../backend/auth.config";
-import { Navigate } from "react-router";
+import { useNavigate } from "react-router";
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("");
   const [darkMode, setDarkMode] = useState(true);
 
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     await authservice.logoutUser();
-    Navigate("/user/login");
+    navigate("/user/login");
   };
 
   useEffect(() => {

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import guardService from "../backend/guard.config";
+import guardService from "../backend/guard.config.js";
+import { FiLogOut } from "react-icons/fi";
+import { useNavigate } from "react-router";
+import authservice from "../backend/auth.config.js";
 
 function UserDashboard() {
   const [guards, setGuards] = useState([]);
@@ -8,14 +11,19 @@ function UserDashboard() {
   const [error, setError] = useState(null);
   const [complaint, setComplaint] = useState("");
   const [selectedGuard, setSelectedGuard] = useState(null);
+  const [darkMode, setDarkMode] = useState(true);
+
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await authservice.logoutUser();
+    navigate("/user/login");
+  };
 
   useEffect(() => {
     async function fetchGuards() {
       try {
         const res = await guardService.ListGuard();
-        console.log(res);
-
-        setGuards(res.data);
+        setGuards(res.data.data);
       } catch (err) {
         setError("Failed to fetch guards");
       } finally {
@@ -24,6 +32,10 @@ function UserDashboard() {
     }
     fetchGuards();
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   const handleComplaintSubmit = async (guardId) => {
     if (!complaint.trim()) return alert("Complaint cannot be empty");
@@ -44,15 +56,32 @@ function UserDashboard() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">All Guards</h2>
-      <div className="bg-white p-4 shadow rounded-lg">
+    <div
+      className={`p-6 min-h-screen ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }`}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">All Guards</h2>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="p-2 bg-gray-700 text-white rounded"
+        >
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
+      </div>
+
+      <div
+        className={`p-4 shadow rounded-lg ${
+          darkMode ? "bg-gray-800 text-white" : "bg-white"
+        }`}
+      >
         {guards.length === 0 ? (
           <p>No guards found.</p>
         ) : (
           <table className="w-full border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-gray-200">
+              <tr className={`${darkMode ? "bg-gray-700" : "bg-gray-200"}`}>
                 <th className="border p-2">Name</th>
                 <th className="border p-2">Email</th>
                 <th className="border p-2">Actions</th>
@@ -76,12 +105,30 @@ function UserDashboard() {
             </tbody>
           </table>
         )}
+        <div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            <FiLogOut size={20} />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
+
       {selectedGuard && (
-        <div className="mt-6 p-4 bg-white shadow rounded-lg">
+        <div
+          className={`mt-6 p-4 shadow rounded-lg ${
+            darkMode ? "bg-gray-800 text-white" : "bg-white"
+          }`}
+        >
           <h3 className="text-xl font-semibold mb-2">Lodge a Complaint</h3>
           <textarea
-            className="w-full p-2 border rounded"
+            className={`w-full p-2 border rounded ${
+              darkMode
+                ? "bg-gray-700 text-white border-gray-600"
+                : "border-gray-300"
+            }`}
             placeholder="Enter your complaint here..."
             value={complaint}
             onChange={(e) => setComplaint(e.target.value)}
