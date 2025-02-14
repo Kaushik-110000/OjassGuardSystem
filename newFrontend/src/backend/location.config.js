@@ -16,6 +16,17 @@ export class LocationService {
       throw error;
     }
   }
+
+  async addAssignment(data) {
+    try {
+      const res = await axios.post(`${server.serverUrl}/location/assign`, data);
+      if (res.status == 201) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 const locationservice = new LocationService();
 export default locationservice;
