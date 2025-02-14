@@ -23,6 +23,16 @@ export class GuardService {
       throw error;
     }
   }
+
+  async ListAssignedGuards() {
+    try {
+      const res = await axios.get(`${server.serverUrl}/guard/assignedGuards`);
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const guardService = new GuardService();

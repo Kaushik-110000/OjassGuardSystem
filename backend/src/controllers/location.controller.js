@@ -58,4 +58,15 @@ const assignLocation = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, location, "Location assigned successfully"));
 });
 
+const unassignedGuard = asyncHandler(async (req, res) => {
+  const assignMentId = req.params;
+  if (!assignMentId) {
+    throw new ApiError(404, "Not found assignment");
+  }
+  const res = await Location.findByIdAndDelete(assignMentId);
+  if(!res){
+    throw new ApiError(404,"")
+  }
+});
+
 export { getCoordinates, assignLocation };

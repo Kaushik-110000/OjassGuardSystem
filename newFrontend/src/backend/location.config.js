@@ -24,6 +24,7 @@ export class LocationService {
       throw error;
     }
   }
+
 }
 const locationservice = new LocationService();
 export default locationservice;

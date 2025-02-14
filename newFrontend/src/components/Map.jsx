@@ -50,7 +50,7 @@ function Map() {
   const [guards, setGuards] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState(null);
-
+  const [assignedGuards, setAssignedGuards] = useState([]);
   useEffect(() => {
     guardService
       .ListUnassignedGuard()
@@ -60,6 +60,16 @@ function Map() {
         console.log("Guards Data:", validGuards);
       })
       .catch((error) => console.error("Error fetching guards:", error));
+
+    guardService
+      .ListAssignedGuards()
+      .then((res) => {
+        setAssignedGuards(res.data.data);
+        console.log("ass", res.data.data);
+      })
+      .catch((error) => {
+        console.error("Error in fetching ");
+      });
   }, []);
 
   const handleLocationSearch = async (locationName) => {
@@ -89,6 +99,22 @@ function Map() {
       selectedLocation,
       selectedGuard,
     });
+
+    locationservice
+      .addAssignment({
+        guardId: selectedGuard._id,
+        latitude: selectedLocation[0],
+        longitude: selectedLocation[1],
+        from: "2025-02-14T08:00:00Z",
+        to: "2025-02-14T10:00:00Z",
+        duration: 6,
+      })
+      .then(() => {
+        console.log("Added ");
+      })
+      .catch((er) => {
+        console.log(er);
+      });
   };
 
   return (
@@ -119,7 +145,7 @@ function Map() {
       )}
 
       <div className="w-3/4 h-[500px] rounded-xl overflow-hidden shadow-lg">
-        <MapContainer center={mapCenter} zoom={13} className="h-full w-full">
+        <MapContainer center={mapCenter} zoom={35} className="h-full w-full">
           <ChangeView center={mapCenter} />
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -157,6 +183,30 @@ function Map() {
       >
         ✅ Final Submit
       </button>
+
+      <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold mb-2">
+          🛡️ Assigned Guards are here
+        </h2>
+        <ul>
+          {assignedGuards.map((guard) => (
+            <li
+              key={guard?.guardDetails?._id}
+              className={`p-2 cursor-pointer border-b hover:bg-gray-200 `}
+            >
+              {guard?.guardDetails?.fullName} ({guard?.guardDetails?.email})
+              <button
+                id={guard._id}
+                onClick={(e) => {
+                  console.log(e.target.id);
+                }}
+              >
+                Unassign
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

@@ -282,6 +282,43 @@ const listUnassignedGuards = asyncHandler(async (req, res) => {
     );
 });
 
+const listAuthorisedGuards = asyncHandler(async (req, res) => {
+  const data = await Location.aggregate([
+    {
+      $lookup: {
+        from: "guards", // Reference to the 'Guard' collection
+        localField: "guard",
+        foreignField: "_id",
+        as: "guardDetails",
+      },
+    },
+    {
+      $unwind: "$guardDetails", // Convert array result from $lookup into an object
+    },
+    {
+      $match: {
+        "guardDetails.isApproved": true, // Only include approved guards
+      },
+    },
+    {
+      $project: {
+        "guardDetails.password": 0,
+        "guardDetails.refreshToken": 0, // Exclude sensitive fields
+      },
+    },
+  ]);
+
+  if (!data.length) {
+    throw new ApiError(404, "No authorised guards found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, data, "Authorised guards retrieved successfully")
+    );
+});
+
 export {
   registerGuard,
   loginGuard,
@@ -292,4 +329,5 @@ export {
   getGuard,
   listAutherisedGuards,
   listUnassignedGuards,
+  listAuthorisedGuards,
 };
