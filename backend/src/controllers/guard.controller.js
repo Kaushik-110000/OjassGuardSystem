@@ -319,6 +319,29 @@ const listAuthorisedGuards = asyncHandler(async (req, res) => {
     );
 });
 
+const getSingleGuardAssignment = asyncHandler(async (req, res) => {
+  const guardId = req.user?._id;
+  if (!guardId) {
+    throw new ApiError(404, "NOT AUTHENTICATED");
+  }
+
+  const deployment = await Location.aggregate([
+    {
+      $match: {
+        guard: guardId,
+      },
+    },
+  ]);
+
+  if (!deployment || deployment.length === 0) {
+    throw new ApiError(404, "Deployment not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deployment, "Found deployment"));
+});
+
 export {
   registerGuard,
   loginGuard,
@@ -330,4 +353,5 @@ export {
   listAutherisedGuards,
   listUnassignedGuards,
   listAuthorisedGuards,
+  getSingleGuardAssignment,
 };

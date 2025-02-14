@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiLogOut,
@@ -10,16 +10,25 @@ import {
   FiMoon,
 } from "react-icons/fi";
 import authService from "../backend/auth.config.js";
-
+import guardService from "../backend/guard.config.js";
+import LiveLock from "../components/Liveloc.jsx";
 function GuardDashboard() {
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
-
+  const [deploymentId, setDeploymentID] = useState(null);
   const handleLogout = async () => {
     await authService.logoutGuard();
     navigate("/guard/login");
   };
+
+  useEffect(() => {
+    guardService.getSingleGuardAssignment().then((res) => {
+      console.log(res.data.data);
+      setDeploymentID(res.data?.data[0]?._id);
+      console.log("dep", res.data.data[0]._id);
+    });
+  });
 
   return (
     <div
@@ -100,7 +109,7 @@ function GuardDashboard() {
             <p className="text-2xl">3</p>
           </div>
         </div>
-
+        {deploymentId ? <LiveLock locationId={deploymentId} /> : null}
         {/* Recent Activity */}
         <div
           className={`mt-8 ${
