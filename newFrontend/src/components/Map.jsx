@@ -124,6 +124,24 @@ function Map() {
       });
   };
 
+  const handleLocationSearch = async (locationName) => {
+    try {
+      setLoading(true);
+      const res = await locationservice.getLocationCoordinates({
+        location: locationName,
+      });
+      if (res?.data?.data) {
+        const { latitude, longitude } = res.data.data;
+        setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
+        console.log("Updated Map Center:", latitude, longitude);
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
