@@ -8,6 +8,7 @@ import {
   checkRefreshToken,
   getUser,
   authoriseGuard,
+  appreciateGuard,
 } from "../controllers/user.controller.js";
 
 import { upload } from "../middleware/multer.middleware.js";
@@ -40,6 +41,7 @@ router.get("/check-refresh", checkRefreshToken);
 // Get user by username
 router.get("/:userName", getUser);
 
-router.post("/reqAuth/:guardId",verifyJWTuser, authoriseGuard);
+router.post("/reqAuth/:guardId", verifyJWTuser, authoriseGuard);
+router.post("/appreciate/:guardId", verifyJWTuser, appreciateGuard);
 
 export default router;
