@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
 import ManageGuards from "./ManageGuards";
+import { FiLogOut } from "react-icons/fi";
+import authservice from "../backend/auth.config";
+import { Navigate } from "react-router";
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("");
   const [darkMode, setDarkMode] = useState(true);
+
+  const handleLogout = async () => {
+    await authservice.logoutUser();
+    Navigate("/user/login");
+  };
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -44,6 +52,15 @@ function AdminDashboard() {
             </li>
           </ul>
         </nav>
+        <div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            <FiLogOut size={20} />
+            <span>Logout</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}

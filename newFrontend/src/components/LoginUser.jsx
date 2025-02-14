@@ -33,7 +33,7 @@ function LoginUser() {
         setUserName("");
         setEmail("");
         setPassword("");
-        navigate(`/user/${user.userName}`);
+        navigate(`/user/u/${user.userName}`);
       }
     } catch (error) {
       setButtonData("Login");
