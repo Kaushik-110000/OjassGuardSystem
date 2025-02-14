@@ -1,26 +1,24 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
+import Input from "./Input.jsx";
 import { Link, useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
-import { login as storeLogin } from "../store/authSlice.js";
 import authService from "../backend/auth.config.js";
 import errorTeller from "../backend/errorTeller.js";
 
-function Register() {
+function RegisterUser() {
   const [formData, setFormData] = useState({
     userName: "",
     fullName: "",
     email: "",
     password: "",
     avatar: null,
-    linkedin: "",
-    googleScholar: "",
+    role: "user",
   });
 
   const [buttonData, setButtonData] = useState("Register");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -42,11 +40,10 @@ function Register() {
       data.append("email", formData.email);
       data.append("password", formData.password);
       data.append("avatar", formData.avatar);
-      if (formData.linkedin) data.append("linkedin", formData.linkedin);
-      if (formData.googleScholar)
-        data.append("googleScholar", formData.googleScholar);
+      data.append("role", formData.role);
 
       const user = await authService.register(data);
+      console.log(user);
       if (user) {
         alert("Account created successfully! You can now log in.");
         navigate("/login");
@@ -58,7 +55,7 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-blue-200 ">
+    <div className="flex justify-center items-center min-h-screen bg-blue-200">
       <div className="w-full max-w-md bg-blue-900 text-white rounded-2xl shadow-xl p-8 mt-5 mx-2 mb-5">
         <h2 className="text-3xl font-semibold mb-6 text-center">
           Create Account
@@ -123,23 +120,18 @@ function Register() {
             className="file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-500"
           />
 
-          <Input
-            type="text"
-            label="LinkedIn (Optional)"
-            name="linkedin"
-            placeholder="Enter LinkedIn profile link"
-            onChange={handleChange}
-            value={formData.linkedin}
-          />
-
-          <Input
-            type="text"
-            label="Google Scholar (Optional)"
-            name="googleScholar"
-            placeholder="Enter Google Scholar profile link"
-            onChange={handleChange}
-            value={formData.googleScholar}
-          />
+          <div>
+            <label className="block text-white mb-1">Role</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-xl bg-blue-700 text-white"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
 
           <button
             type="submit"
@@ -153,4 +145,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegisterUser;

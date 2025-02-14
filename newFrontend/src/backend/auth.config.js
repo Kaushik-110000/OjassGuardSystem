@@ -1,4 +1,5 @@
-import { retry } from "@reduxjs/toolkit/query";
+/* eslint-disable no-useless-catch */
+/* eslint-disable no-undef */
 import server from "../conf/conf.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -8,7 +9,7 @@ export class Authservice {
     try {
       console.log(data);
       const response = await axios.post(
-        `${server.serverUrl}/users/register`,
+        `${server.serverUrl}/user/register`,
         data,
         {
           headers: {
@@ -16,9 +17,12 @@ export class Authservice {
           },
         }
       );
-      if (response) {
+      
+      if (response.status==201) {
         return response;
-      } else throw error;
+      } else {
+        throw error;
+      }
     } catch (error) {
       throw error;
     }
