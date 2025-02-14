@@ -50,10 +50,25 @@ export class Authservice {
     }
   }
 
-  async login(data) {
+  async loginUser(data) {
     try {
       const response = await axios.post(
         `${server.serverUrl}/user/login`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response) return response;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async loginGuard(data) {
+    try {
+      const response = await axios.post(
+        `${server.serverUrl}/guard/login`,
         data,
         {
           withCredentials: true,

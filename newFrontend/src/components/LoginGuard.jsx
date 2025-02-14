@@ -6,7 +6,7 @@ import { login as storeLogin } from "../store/authSlice.js";
 import authService from "../backend/auth.config.js";
 import errorTeller from "../backend/errorTeller.js";
 
-function LoginUser() {
+function LoginGuard() {
   const [error, setError] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,17 +23,16 @@ function LoginUser() {
 
     try {
       const formData = { userName, email, password };
-      await authService.login(formData);
+      await authService.loginGuard(formData);
 
       const user = await authService.getCurrentGuard();
-      console.log(user);
       
       if (user) {
         dispatch(storeLogin({ userData: user }));
         setUserName("");
         setEmail("");
         setPassword("");
-        navigate(`/guard/${user.userName}`);
+        navigate(`/guard/g/${user.userName}`);
       }
     } catch (error) {
       setButtonData("Login");
@@ -105,4 +104,4 @@ function LoginUser() {
   );
 }
 
-export default LoginUser;
+export default LoginGuard;

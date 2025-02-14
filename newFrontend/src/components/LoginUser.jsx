@@ -23,7 +23,7 @@ function LoginUser() {
 
     try {
       const formData = { userName, email, password };
-      await authService.login(formData);
+      await authService.loginUser(formData);
 
       const user = await authService.getCurrentUser();
       console.log(user);

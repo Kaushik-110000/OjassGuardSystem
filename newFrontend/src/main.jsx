@@ -9,6 +9,7 @@ import {
   RegisterUser,
   RegisterGuard,
   LoginUser,
+  LoginGuard,
   UserDashboard,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
         element: <LoginUser />,
       },
       {
-        path: "/guard/:username",
+        path: "/guard/login",
+        element: <LoginGuard />,
+      },
+      {
+        path: "/guard/g/:username",
         element: <UserDashboard />,
       },
     ],

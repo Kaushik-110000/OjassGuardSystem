@@ -16,24 +16,6 @@ function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const loggedInUser = await authService.getCurrentUser();
-        if (!loggedInUser) {
-          navigate("/login");
-        } else {
-          setUser(loggedInUser);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        navigate("/login");
-      }
-    };
-
-    fetchUser();
-  }, [navigate]);
-
   const handleLogout = async () => {
     await authService.logout();
     navigate("/login");
