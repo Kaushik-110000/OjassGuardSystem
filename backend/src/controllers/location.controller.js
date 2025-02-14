@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Location } from "../models/locations.model.js";
 import { Guard } from "../models/guard.model.js";
+import mongoose from "mongoose";
 axios.defaults.withCredentials = true;
 
 const getCoordinates = asyncHandler(async (req, res) => {
@@ -58,15 +59,28 @@ const assignLocation = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, location, "Location assigned successfully"));
 });
 
-const unassignedGuard = asyncHandler(async (req, res) => {
-  const assignMentId = req.params;
+const unassignTheGuard = asyncHandler(async (req, res) => {
+  const { assignMentId } = req.params; // Extracting the ID properly
+
   if (!assignMentId) {
-    throw new ApiError(404, "Not found assignment");
+    throw new ApiError(404, "Assignment ID is missing");
   }
-  const res = await Location.findByIdAndDelete(assignMentId);
-  if(!res){
-    throw new ApiError(404,"")
+
+  if (!mongoose.Types.ObjectId.isValid(assignMentId)) {
+    throw new ApiError(400, "Invalid assignment ID format");
   }
+
+  const response = await Location.findByIdAndDelete(
+    new mongoose.Types.ObjectId(assignMentId)
+  );
+
+  if (!response) {
+    throw new ApiError(404, "Assignment not found or already deleted");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, response, "Assignment deleted successfully"));
 });
 
-export { getCoordinates, assignLocation };
+export { getCoordinates, assignLocation, unassignTheGuard };

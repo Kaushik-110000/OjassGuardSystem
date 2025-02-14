@@ -25,6 +25,18 @@ export class LocationService {
     }
   }
 
+  async removeAssignment({ assignmentId }) {
+    try {
+      console.log("ASID", assignmentId);
+      const res = await axios.post(
+        `${server.serverUrl}/location/unassignTheGuard/${assignmentId}`
+      );
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 const locationservice = new LocationService();
 export default locationservice;

@@ -117,6 +117,14 @@ function Map() {
       });
   };
 
+  function handleUnassignMent(e) {
+    locationservice
+      .removeAssignment({assignmentId:e.currentTarget.id})
+      .then(() => {})
+      .catch((err) => {
+        console.error(err);
+      });
+  }
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -195,12 +203,7 @@ function Map() {
               className={`p-2 cursor-pointer border-b hover:bg-gray-200 `}
             >
               {guard?.guardDetails?.fullName} ({guard?.guardDetails?.email})
-              <button
-                id={guard._id}
-                onClick={(e) => {
-                  console.log(e.target.id);
-                }}
-              >
+              <button id={guard._id} onClick={handleUnassignMent}>
                 Unassign
               </button>
             </li>
