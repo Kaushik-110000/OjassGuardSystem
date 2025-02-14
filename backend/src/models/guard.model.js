@@ -70,7 +70,7 @@ const guardSchema = new Schema(
     },
     role: {
       type: String,
-      default: "Guard",
+      default: "guard",
     },
   },
   { timestamps: true }
