@@ -9,14 +9,14 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       index: true,
-      lowerCase: true,
+      lowercase: true, // Fixed typo (was lowerCase)
       trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowerCase: true,
+      lowercase: true, // Fixed typo (was lowerCase)
       trim: true,
     },
     fullName: {
@@ -26,35 +26,40 @@ const userSchema = new Schema(
       index: true,
     },
     avatar: {
-      type: String, //cloudinary url
+      type: String, // Cloudinary URL
       required: true,
     },
     password: {
       type: String,
       required: [true, "Password is required"],
+      select: false, // Prevent password from being queried accidentally
     },
     refreshToken: {
       type: String,
+      select: false, // Prevent token exposure in queries
     },
     role: {
       type: String,
       required: true,
+      default: "user", // Default role
     },
   },
   { timestamps: true }
 );
 
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
+// Method to compare passwords
 userSchema.methods.isPasswordCorrect = async function (tpassword) {
   return await bcrypt.compare(tpassword, this.password);
 };
 
+// Generate Access Token
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
@@ -70,6 +75,7 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
+// Generate Refresh Token
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
@@ -82,4 +88,5 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
+// Export Model
 export const User = mongoose.model("User", userSchema);
