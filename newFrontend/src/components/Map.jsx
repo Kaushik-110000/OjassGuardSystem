@@ -8,8 +8,17 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import locationservice from "../backend/location.config.js";
 import guardService from "../backend/guard.config.js";
+
+// Define custom icon for assigned guards
+const guardIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // Example guard icon
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -30],
+});
 
 // Clickable Marker Component
 function LocationMarker({ onLocationSelect }) {
@@ -38,7 +47,7 @@ function ChangeView({ center }) {
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.setView(center, 13);
+      map.setView(center, 25);
     }
   }, [center, map]);
   return null;
@@ -51,6 +60,7 @@ function Map() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [assignedGuards, setAssignedGuards] = useState([]);
+
   useEffect(() => {
     guardService
       .ListUnassignedGuard()
@@ -65,30 +75,16 @@ function Map() {
       .ListAssignedGuards()
       .then((res) => {
         setAssignedGuards(res.data.data);
-        console.log("ass", res.data.data);
+        console.log("Assigned Guards:", res.data.data);
+
+        if (res.data.data?.length > 0) {
+          setMapCenter([res.data.data[0].latitude, res.data.data[0].longitude]);
+        }
       })
       .catch((error) => {
-        console.error("Error in fetching ");
+        console.error("Error fetching assigned guards:", error);
       });
   }, []);
-
-  const handleLocationSearch = async (locationName) => {
-    try {
-      setLoading(true);
-      const res = await locationservice.getLocationCoordinates({
-        location: locationName,
-      });
-      if (res?.data?.data) {
-        const { latitude, longitude } = res.data.data;
-        setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
-        console.log("Updated Map Center:", latitude, longitude);
-      }
-    } catch (error) {
-      console.error("Error fetching location:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFinalSubmit = () => {
     if (!selectedLocation || !selectedGuard) {
@@ -110,21 +106,24 @@ function Map() {
         duration: 6,
       })
       .then(() => {
-        console.log("Added ");
+        console.log("Assignment Added");
       })
-      .catch((er) => {
-        console.log(er);
+      .catch((error) => {
+        console.log("Error:", error);
       });
   };
 
-  function handleUnassignMent(e) {
+  const handleUnassignMent = (e) => {
     locationservice
-      .removeAssignment({assignmentId:e.currentTarget.id})
-      .then(() => {})
+      .removeAssignment({ assignmentId: e.currentTarget.id })
+      .then(() => {
+        console.log("Assignment Removed");
+      })
       .catch((err) => {
-        console.error(err);
+        console.error("Error:", err);
       });
-  }
+  };
+
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -160,9 +159,31 @@ function Map() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
+          {/* User Clickable Marker */}
           <LocationMarker
             onLocationSelect={(lat, lng) => setSelectedLocation([lat, lng])}
           />
+
+          {/* Assigned Guards Markers */}
+          {assignedGuards.map((guard) => (
+            <Marker
+              key={guard.guardDetails._id}
+              position={[guard.latitude, guard.longitude]}
+              icon={guardIcon}
+            >
+              <Popup
+                id={guard.guardDetails._id}
+                onClick={console.log(guard.guardDetails._id)}
+              >
+                🛡️ {guard.guardDetails.fullName} <br />
+                ✉️ {guard.guardDetails.email} <br />
+                📍 {guard.latitude}, {guard.longitude}
+                <button id={guard._id} onClick={handleUnassignMent}>
+                  Remove
+                </button>
+              </Popup>
+            </Marker>
+          ))}
         </MapContainer>
       </div>
 
@@ -192,19 +213,19 @@ function Map() {
         ✅ Final Submit
       </button>
 
+      {/* Assigned Guards List */}
       <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-2">
-          🛡️ Assigned Guards are here
-        </h2>
+        <h2 className="text-lg font-semibold mb-2">🛡️ Assigned Guards</h2>
         <ul>
           {assignedGuards.map((guard) => (
-            <li
-              key={guard?.guardDetails?._id}
-              className={`p-2 cursor-pointer border-b hover:bg-gray-200 `}
-            >
-              {guard?.guardDetails?.fullName} ({guard?.guardDetails?.email})
-              <button id={guard._id} onClick={handleUnassignMent}>
-                Unassign
+            <li key={guard.guardDetails._id} className="p-2 border-b">
+              {guard.guardDetails.fullName} ({guard.guardDetails.email})
+              <button
+                id={guard._id}
+                onClick={handleUnassignMent}
+                className="ml-4 px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                ❌ Unassign
               </button>
             </li>
           ))}
