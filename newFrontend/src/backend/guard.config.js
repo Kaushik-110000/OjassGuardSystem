@@ -39,16 +39,28 @@ export class GuardService {
 
   async lodgeComplaint(guardId, complaint) {
     try {
-      console.log(complaint);
-      
       const res = await axios.post(
         `${server.serverUrl}/user/reqAuth/${guardId}`,
         {
-          complain:complaint,
+          complain: complaint,
         }
       );
-      console.log(res);
-      
+
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async sendAppreciation(guardId, message) {
+    try {
+      const res = await axios.post(
+        `${server.serverUrl}/user/appreciate/${guardId}`,
+        {
+          message,
+        }
+      );
+
       if (res) return res;
       else throw error;
     } catch (error) {
