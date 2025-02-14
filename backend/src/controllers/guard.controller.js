@@ -222,6 +222,25 @@ const getGuard = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, guard, "Guard retrieved successfully"));
 });
 
+const listAutherisedGuards = asyncHandler(async (req, res) => {
+  const authorisedGuards = await Guard.find({ isApproved: true }).select(
+    "-password -refreshToken"
+  );
+
+  if (!authorisedGuards.length)
+    throw new ApiError(404, "No unauthorised guards found");
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        authorisedGuards,
+        "Authorised guards retrieved successfully"
+      )
+    );
+});
+
 export {
   registerGuard,
   loginGuard,
@@ -230,4 +249,5 @@ export {
   getCurrentGuard,
   checkRefreshToken,
   getGuard,
+  listAutherisedGuards,
 };
