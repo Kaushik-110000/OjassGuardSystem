@@ -20,8 +20,16 @@ const generateAccessAndRefreshTokens = async (guardId) => {
 };
 
 const registerGuard = asyncHandler(async (req, res) => {
-  const { userName, fullName, email, password, residence, description, age } =
-    req.body;
+  const {
+    userName,
+    fullName,
+    email,
+    password,
+    residence,
+    description,
+    age,
+    workHistory,
+  } = req.body;
 
   if (
     !userName ||
@@ -38,13 +46,26 @@ const registerGuard = asyncHandler(async (req, res) => {
   const existingGuard = await Guard.findOne({ $or: [{ userName }, { email }] });
   if (existingGuard) throw new ApiError(409, "Guard already exists");
 
+  // Handle avatar upload
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   if (!avatarLocalPath) throw new ApiError(400, "Avatar image is required");
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  fs.unlinkSync(avatarLocalPath);
-  
   if (!avatar) throw new ApiError(500, "Failed to upload avatar");
+
+  // Validate workHistory
+  let parsedWorkHistory = [];
+  if (workHistory) {
+    try {
+      parsedWorkHistory = JSON.parse(workHistory); // Ensure it's an array
+      if (!Array.isArray(parsedWorkHistory)) throw new Error();
+    } catch (error) {
+      throw new ApiError(
+        400,
+        "Invalid workHistory format. Must be a JSON array."
+      );
+    }
+  }
 
   const guard = await Guard.create({
     userName: userName.toLowerCase(),
@@ -55,6 +76,7 @@ const registerGuard = asyncHandler(async (req, res) => {
     residence,
     description,
     age,
+    workHistory: parsedWorkHistory, // Add work history here
   });
 
   const createdGuard = await Guard.findById(guard._id).select(
