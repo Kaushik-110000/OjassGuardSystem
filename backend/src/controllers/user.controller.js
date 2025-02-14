@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { Guard } from "../models/guard.model.js";
+import { Complain } from "../models/complain.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
@@ -26,7 +28,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
  * Registers a new user
  */
 const registerUser = asyncHandler(async (req, res) => {
-  const { userName, fullName, email, password, role="user" } = req.body;
+  const { userName, fullName, email, password, role = "user" } = req.body;
 
   if (!userName || !fullName || !email || !password) {
     throw new ApiError(400, "All fields are required");
@@ -198,6 +200,43 @@ const checkRefreshToken = asyncHandler(async (req, res) => {
 /**
  * Retrieves a user by username
  */
+
+const authoriseGuard = asyncHandler(async (req, res) => {
+  if (!req?.user?._id) {
+    throw new ApiError(400, "your id is missing");
+  }
+
+  const { complain } = req.body;
+  if (!complain) {
+    throw new ApiError(400, "You must give feedBack");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User not found");
+  }
+
+  const { guardId } = req.params;
+  if (!guardId) throw new ApiError(400, "Guard ID is missing");
+
+  const guard = await Guard.findById(guardId);
+  if (!guard) throw new ApiError(404, "Guard not found");
+
+  guard.isApproved = false; // Assuming there is an `isAuthorised` field
+  await guard.save();
+
+  const comp = await Complain.create({
+    complain: complain,
+    guard: guardId,
+  });
+  
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, guard, "Guard authorisation requested successfully")
+    );
+});
+
 const getUser = asyncHandler(async (req, res) => {
   const { userName } = req.params;
   if (!userName) throw new ApiError(400, "Username is required");
@@ -220,4 +259,5 @@ export {
   getCurrentUser,
   checkRefreshToken,
   getUser,
+  authoriseGuard,
 };
