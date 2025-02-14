@@ -83,4 +83,20 @@ const unassignTheGuard = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, response, "Assignment deleted successfully"));
 });
 
-export { getCoordinates, assignLocation, unassignTheGuard };
+const getALocation = asyncHandler(async (req, res) => {
+  const { locationId } = req.params;
+  if (!locationId) {
+    throw new ApiError(404, "Location id is missing");
+  }
+
+  const location = await Location.findById(
+    new mongoose.Types.ObjectId(locationId)
+  );
+  if (!location) {
+    throw new ApiError(404, "Assignment cannot be found");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, location, "Fetched assignment"));
+});
+export { getCoordinates, assignLocation, unassignTheGuard, getALocation };

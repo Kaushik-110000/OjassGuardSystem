@@ -8,7 +8,7 @@ export class LocationService {
     try {
       const res = await axios.post(
         `${server.serverUrl}/location/getCoordinates`,
-        { location: location }
+        location
       );
       if (res.status == 200) return res;
       else throw error;
@@ -32,6 +32,18 @@ export class LocationService {
       console.log("ASID", assignmentId);
       const res = await axios.post(
         `${server.serverUrl}/location/unassignTheGuard/${assignmentId}`
+      );
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSingleAssignment({ assignmentId }) {
+    try {
+      const res = await axios.get(
+        `${server.serverUrl}/location/getAssignment/${assignmentId}`
       );
       if (res) return res;
       else throw error;

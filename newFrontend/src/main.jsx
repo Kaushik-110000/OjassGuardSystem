@@ -16,6 +16,7 @@ import {
   UserDashboard,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
+import Liveloc from "./components/Liveloc.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/locatemap",
         element: <Map />,
+      },
+      {
+        path: "/liveloc",
+        element: <Liveloc />,
       },
     ],
   },

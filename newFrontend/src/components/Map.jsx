@@ -131,6 +131,7 @@ function Map() {
         location: locationName,
       });
       if (res?.data?.data) {
+        console.log("res",res.data.data)
         const { latitude, longitude } = res.data.data;
         setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
         console.log("Updated Map Center:", latitude, longitude);
@@ -141,7 +142,7 @@ function Map() {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
