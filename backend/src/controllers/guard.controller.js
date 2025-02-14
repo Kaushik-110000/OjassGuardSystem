@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Guard } from "../models/guard.model.js";
+import { Location } from "../models/locations.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
@@ -241,6 +242,46 @@ const listAutherisedGuards = asyncHandler(async (req, res) => {
     );
 });
 
+const listUnassignedGuards = asyncHandler(async (req, res) => {
+  const data = await Guard.aggregate([
+    {
+      $match: {
+        isApproved: true, // Only fetch approved guards
+      },
+    },
+    {
+      $lookup: {
+        from: "locations", // Refers to the 'Location' collection
+        localField: "_id",
+        foreignField: "guard",
+        as: "assignedLocations",
+      },
+    },
+    {
+      $match: {
+        assignedLocations: { $size: 0 }, // Filters out guards who have at least one assigned location
+      },
+    },
+    {
+      $project: {
+        password: 0,
+        refreshToken: 0,
+        assignedLocations: 0, // Exclude unnecessary fields
+      },
+    },
+  ]);
+
+  if (!data.length) {
+    throw new ApiError(404, "No unassigned guards found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, data, "Unassigned guards retrieved successfully")
+    );
+});
+
 export {
   registerGuard,
   loginGuard,
@@ -250,4 +291,5 @@ export {
   checkRefreshToken,
   getGuard,
   listAutherisedGuards,
+  listUnassignedGuards,
 };

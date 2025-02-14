@@ -38,34 +38,30 @@ function ChangeView({ center }) {
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.setView(center, 25); // Update map center & zoom level
+      map.setView(center, 13);
     }
   }, [center, map]);
   return null;
 }
 
 function Map() {
-  const [mapCenter, setMapCenter] = useState([51.505, -0.09]); // Default center
+  const [mapCenter, setMapCenter] = useState([51.505, -0.09]);
   const [loading, setLoading] = useState(false);
   const [guards, setGuards] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([51.505, -0.09]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedGuard, setSelectedGuard] = useState(null);
 
-  // Fetch Guard Locations
   useEffect(() => {
     guardService
-      .ListGuard()
+      .ListUnassignedGuard()
       .then((res) => {
-        const validGuards = res?.data?.data?.filter(
-          (guard) =>
-            guard.latitude !== undefined && guard.longitude !== undefined
-        ); // ✅ Filter out invalid data
+        const validGuards = res?.data?.data;
         setGuards(validGuards);
-        console.log("Filtered Guards Data:", validGuards);
+        console.log("Guards Data:", validGuards);
       })
       .catch((error) => console.error("Error fetching guards:", error));
   }, []);
 
-  // Handle location search
   const handleLocationSearch = async (locationName) => {
     try {
       setLoading(true);
@@ -84,13 +80,23 @@ function Map() {
     }
   };
 
+  const handleFinalSubmit = () => {
+    if (!selectedLocation || !selectedGuard) {
+      alert("Please select a location and a guard first.");
+      return;
+    }
+    console.log("Final Submission:", {
+      selectedLocation,
+      selectedGuard,
+    });
+  };
+
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">
         📍 Location Tracker
       </h1>
 
-      {/* Search Bar */}
       <div className="flex w-3/4 max-w-md mb-4">
         <input
           type="text"
@@ -112,7 +118,6 @@ function Map() {
         <p className="text-blue-600 font-semibold">⏳ Fetching location...</p>
       )}
 
-      {/* Map Container */}
       <div className="w-3/4 h-[500px] rounded-xl overflow-hidden shadow-lg">
         <MapContainer center={mapCenter} zoom={13} className="h-full w-full">
           <ChangeView center={mapCenter} />
@@ -121,37 +126,37 @@ function Map() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
-          {/* Clickable Marker */}
           <LocationMarker
-            onLocationSelect={(lat, lng) => {
-              setSelectedLocation([lat, lng]);
-              console.log("Selected Location:", lat, lng);
-            }}
+            onLocationSelect={(lat, lng) => setSelectedLocation([lat, lng])}
           />
-
-          {/* ✅ Guard Markers (Fixed) */}
-          {guards.map((guard, index) => (
-            <Marker
-              key={index}
-              position={[
-                parseFloat(guard.latitude),
-                parseFloat(guard.longitude),
-              ]}
-            >
-              <Popup>
-                🛡️ Guard: {guard.fullName} <br />
-                📍 Location: {guard.latitude}, {guard.longitude} <br />
-                📧 Email: {guard.email} <br />
-                <img
-                  src={guard.avatar}
-                  alt={guard.fullName}
-                  className="w-16 h-16 rounded-full mt-2"
-                />
-              </Popup>
-            </Marker>
-          ))}
         </MapContainer>
       </div>
+
+      {/* List of Guards */}
+      <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold mb-2">🛡️ Select a Guard</h2>
+        <ul>
+          {guards.map((guard) => (
+            <li
+              key={guard.id}
+              className={`p-2 cursor-pointer border-b hover:bg-gray-200 ${
+                selectedGuard?.id === guard.id ? "bg-blue-300" : ""
+              }`}
+              onClick={() => setSelectedGuard(guard)}
+            >
+              {guard.fullName} ({guard.email})
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Final Submit Button */}
+      <button
+        onClick={handleFinalSubmit}
+        className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+      >
+        ✅ Final Submit
+      </button>
     </div>
   );
 }

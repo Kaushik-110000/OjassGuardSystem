@@ -12,6 +12,17 @@ export class GuardService {
       throw error;
     }
   }
+  async ListUnassignedGuard() {
+    try {
+      const res = await axios.get(
+        `${server.serverUrl}/guard/unassignedGuardsList`
+      );
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const guardService = new GuardService();

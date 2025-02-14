@@ -8,6 +8,7 @@ import {
   checkRefreshToken,
   getGuard,
   listAutherisedGuards,
+  listUnassignedGuards,
 } from "../controllers/guard.controller.js";
 
 import { upload } from "../middleware/multer.middleware.js";
@@ -40,4 +41,5 @@ router.get("/check-refresh", checkRefreshToken);
 // Get guard by username
 router.get("/single/:userName", getGuard);
 router.get("/list", listAutherisedGuards);
+router.get("/unassignedGuardsList", listUnassignedGuards);
 export default router;
