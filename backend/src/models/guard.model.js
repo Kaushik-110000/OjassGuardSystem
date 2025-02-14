@@ -68,6 +68,10 @@ const guardSchema = new Schema(
       type: Number,
       required: true,
     },
+    role: {
+      type: String,
+      default: "Guard",
+    },
   },
   { timestamps: true }
 );

@@ -36,6 +36,10 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    role: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
