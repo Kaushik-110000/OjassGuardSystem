@@ -40,10 +40,7 @@ function UserDashboard() {
   const handleComplaintSubmit = async (guardId) => {
     if (!complaint.trim()) return alert("Complaint cannot be empty");
     try {
-      await axios.post(`/api/complaints`, {
-        guardId,
-        complaint,
-      });
+      await guardService.lodgeComplaint(guardId, complaint);
       alert("Complaint submitted successfully");
       setComplaint("");
       setSelectedGuard(null);
@@ -105,15 +102,6 @@ function UserDashboard() {
             </tbody>
           </table>
         )}
-        <div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-2 w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            <FiLogOut size={20} />
-            <span>Logout</span>
-          </button>
-        </div>
       </div>
 
       {selectedGuard && (
@@ -141,6 +129,15 @@ function UserDashboard() {
           </button>
         </div>
       )}
+      <div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-2 w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          <FiLogOut size={20} />
+          <span>Logout</span>
+        </button>
+      </div>
     </div>
   );
 }

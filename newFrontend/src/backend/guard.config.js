@@ -8,7 +8,6 @@ export class GuardService {
   async ListGuard() {
     try {
       const res = await axios.get(`${server.serverUrl}/guard/list`);
-      console.log(res);
 
       if (res) return res;
       else throw error;
@@ -31,6 +30,25 @@ export class GuardService {
   async ListAssignedGuards() {
     try {
       const res = await axios.get(`${server.serverUrl}/guard/assignedGuards`);
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async lodgeComplaint(guardId, complaint) {
+    try {
+      console.log(complaint);
+      
+      const res = await axios.post(
+        `${server.serverUrl}/user/reqAuth/${guardId}`,
+        {
+          complain:complaint,
+        }
+      );
+      console.log(res);
+      
       if (res) return res;
       else throw error;
     } catch (error) {
