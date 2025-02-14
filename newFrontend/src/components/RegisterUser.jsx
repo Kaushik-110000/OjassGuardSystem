@@ -42,7 +42,7 @@ function RegisterUser() {
       data.append("avatar", formData.avatar);
       data.append("role", formData.role);
 
-      const user = await authService.register(data);
+      const user = await authService.registerUser(data);
       console.log(user);
       if (user) {
         alert("Account created successfully! You can now log in.");
@@ -55,8 +55,8 @@ function RegisterUser() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-blue-200">
-      <div className="w-full max-w-md bg-blue-900 text-white rounded-2xl shadow-xl p-8 mt-5 mx-2 mb-5">
+    <div className="flex justify-center items-center min-h-screen ">
+      <div className="w-full max-w-md bg-gradient-to-b from-purple-700 bg-transparent text-white rounded-2xl shadow-xl p-8 mt-5 mx-2 mb-5">
         <h2 className="text-3xl font-semibold mb-6 text-center">
           Create Account
         </h2>
@@ -72,7 +72,7 @@ function RegisterUser() {
 
         {error && <div className="text-red-400 text-center mb-4">{error}</div>}
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-2" onSubmit={handleSubmit}>
           <Input
             required
             label="Username"

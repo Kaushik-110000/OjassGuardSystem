@@ -5,15 +5,25 @@ import { createBrowserRouter } from "react-router";
 import "./index.css";
 import App from "./App.jsx";
 import store from "./store/store.js";
-import { RegisterUser } from "./components/index.js";
+import { RegisterUser, RegisterGuard, LoginUser } from "./components/index.js";
+import Error from "./components/Error.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <Error />,
     children: [
       {
         path: "/user/register",
         element: <RegisterUser />,
+      },
+      {
+        path: "/guard/register",
+        element: <RegisterGuard />,
+      },
+      {
+        path: "/user/login",
+        element: <LoginUser />,
       },
     ],
   },

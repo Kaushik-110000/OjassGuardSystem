@@ -9,7 +9,7 @@ import Header from "./components/Header.jsx";
 import { Outlet, useLocation } from "react-router-dom";
 import authservice from "./backend/auth.config.js";
 import Container from "./container/Container.jsx";
-import Homedesign from "./components/Homedesign.jsx";
+import Error from "./components/Error.jsx";
 function App() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -55,11 +55,13 @@ function App() {
   // }, []);
 
   return !loading ? (
-    <Container>
-      <Header />
-      {location.pathname === "/" && <Homedesign />}
-      <Outlet />
-    </Container>
+    <>
+      <Container>
+        <Header />
+        {/* {location.pathname === "/" && <Error />} */}
+        <Outlet />
+      </Container>
+    </>
   ) : null;
 }
 

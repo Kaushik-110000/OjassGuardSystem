@@ -5,7 +5,7 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export class Authservice {
-  async register(data) {
+  async registerUser(data) {
     try {
       console.log(data);
       const response = await axios.post(
@@ -17,8 +17,30 @@ export class Authservice {
           },
         }
       );
-      
-      if (response.status==201) {
+
+      if (response.status == 201) {
+        return response;
+      } else {
+        throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  async registerGuard(data) {
+    try {
+      console.log(data);
+      const response = await axios.post(
+        `${server.serverUrl}/guard/register`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Let axios set the correct content-type
+          },
+        }
+      );
+
+      if (response.status == 201) {
         return response;
       } else {
         throw error;

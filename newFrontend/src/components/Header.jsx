@@ -15,7 +15,7 @@ function Header() {
     });
   };
   return (
-    <header className="bg-white shadow-md py-3 px-6 mb-1 flex justify-between items-center border-b border-gray-300 w-full sm:px-4 sm:px-10">
+    <header className="bg-white shadow-md py-3 px-6 mb-1 flex justify-between items-center border-b border-gray-300 w-full">
       <img
         // src={logo}
         alt="Logo"

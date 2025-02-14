@@ -1,6 +1,10 @@
 /* eslint-disable react/prop-types */
 function Container({ children }) {
-  return <div className="w-full max-w-8xl mx-auto px-4">{children}</div>;
+  return (
+    <div className="flex flex-col w-screen h-fit overflow-x-hidden justify-center items-center">
+      {children}
+    </div>
+  );
 }
 
 export default Container;
