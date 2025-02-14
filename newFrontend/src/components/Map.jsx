@@ -14,7 +14,7 @@ import guardService from "../backend/guard.config.js";
 
 // Define custom icon for assigned guards
 const guardIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // Example guard icon
+  iconUrl: "/policeman.png", // Example guard icon
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -30],
@@ -28,7 +28,7 @@ function LocationMarker({ onLocationSelect }) {
     click(e) {
       const { lat, lng } = e.latlng;
       setPosition([lat, lng]);
-      console.log("Clicked Location:", lat, lng);
+      // console.log("Clicked Location:", lat, lng);
       onLocationSelect(lat, lng);
     },
   });
@@ -60,6 +60,8 @@ function Map() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [assignedGuards, setAssignedGuards] = useState([]);
+  const [duration, setDuration] = useState(6);
+  const [from, setFrom] = useState("");
 
   useEffect(() => {
     guardService
@@ -67,7 +69,7 @@ function Map() {
       .then((res) => {
         const validGuards = res?.data?.data;
         setGuards(validGuards);
-        console.log("Guards Data:", validGuards);
+        // console.log("Guards Data:", validGuards);
       })
       .catch((error) => console.error("Error fetching guards:", error));
 
@@ -86,14 +88,49 @@ function Map() {
       });
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const curTime = new Date(Date.now()).toISOString();
+
+      assignedGuards.forEach((assigned) => {
+        const { to, _id } = assigned;
+
+        const shiftOver = to === curTime;
+        if (shiftOver) {
+          locationservice
+            .removeAssignment({ assignmentId: _id })
+            .then(() => {
+              console.log("Assignment Removed");
+            })
+            .catch((err) => {
+              console.error("Error:", err);
+            });
+        }
+      });
+    }, 300000);
+
+    return () => clearInterval(interval);
+  });
+
   const handleFinalSubmit = () => {
     if (!selectedLocation || !selectedGuard) {
       alert("Please select a location and a guard first.");
       return;
     }
+
+    const now = new Date(); // Get current time
+    const from = now.toISOString(); // Convert to UTC format
+
+    const to = new Date(
+      now.getTime() + duration * 60 * 60 * 1000
+    ).toISOString();
+
     console.log("Final Submission:", {
       selectedLocation,
       selectedGuard,
+      from,
+      to,
+      duration,
     });
 
     locationservice
@@ -101,12 +138,13 @@ function Map() {
         guardId: selectedGuard._id,
         latitude: selectedLocation[0],
         longitude: selectedLocation[1],
-        from: "2025-02-14T08:00:00Z",
-        to: "2025-02-14T10:00:00Z",
-        duration: 6,
+        from,
+        to,
+        duration,
       })
       .then(() => {
         console.log("Assignment Added");
+        window.location.reload();
       })
       .catch((error) => {
         console.log("Error:", error);
@@ -114,10 +152,17 @@ function Map() {
   };
 
   const handleUnassignMent = (e) => {
+    const eid = e.currentTarget.id;
     locationservice
       .removeAssignment({ assignmentId: e.currentTarget.id })
       .then(() => {
         console.log("Assignment Removed");
+        setAssignedGuards(() => {
+          return assignedGuards.filter((assignment) => {
+            return assignment?._id !== eid;
+          });
+        });
+        window.location.reload();
       })
       .catch((err) => {
         console.error("Error:", err);
@@ -152,7 +197,7 @@ function Map() {
         <input
           type="text"
           placeholder="Enter location..."
-          onBlur={(e) => handleLocationSearch(e.target.value)}
+          // onBlur={(e) => handleLocationSearch(e.target.value)}
           className="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
@@ -191,7 +236,7 @@ function Map() {
             >
               <Popup
                 id={guard.guardDetails._id}
-                onClick={console.log(guard.guardDetails._id)}
+                // onClick={console.log(guard.guardDetails._id)}
               >
                 🛡️ {guard.guardDetails.fullName} <br />
                 ✉️ {guard.guardDetails.email} <br />
@@ -211,7 +256,7 @@ function Map() {
         <ul>
           {guards.map((guard) => (
             <li
-              key={guard.id}
+              key={guard._id}
               className={`p-2 cursor-pointer border-b hover:bg-gray-200 ${
                 selectedGuard?.id === guard.id ? "bg-blue-300" : ""
               }`}
@@ -224,12 +269,34 @@ function Map() {
       </div>
 
       {/* Final Submit Button */}
-      <button
-        onClick={handleFinalSubmit}
-        className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-      >
-        ✅ Final Submit
-      </button>
+      <div className="flex items-center justify-center mt-4 gap-16">
+        <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
+          <label className="block text-gray-700">From Time:</label>
+          <input
+            type="datetime-local"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+          />
+
+          <label className="block text-gray-700">Duration (in hours):</label>
+          <input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+          />
+        </div>
+
+        {/* Submit Button */}
+
+        <button
+          onClick={handleFinalSubmit}
+          className=" px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+        >
+          ✅ Final Submit
+        </button>
+      </div>
 
       {/* Assigned Guards List */}
       <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
