@@ -45,11 +45,13 @@ function ChangeView({ center }) {
 function Map() {
   const [mapCenter, setMapCenter] = useState([51.505, -0.09]); // Default center
   const [loading, setLoading] = useState(false);
-
+  const [selectedLocation, setSelectedLocation] = useState([51.505, -0.09]);
   const handleLocationSearch = async (locationName) => {
     try {
       setLoading(true);
-      const res = await locationservice.getLocationCoordinates(locationName);
+      const res = await locationservice.getLocationCoordinates({
+        location: locationName,
+      });
       if (res?.data?.data) {
         const { latitude, longitude } = res.data.data;
         setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
@@ -71,16 +73,23 @@ function Map() {
         style={{ marginBottom: "10px", padding: "5px" }}
       />
       {loading && <p>Loading location...</p>}
-      
-      <MapContainer center={mapCenter} zoom={13} style={{ height: "100%", width: "100%" }}>
-        <ChangeView center={mapCenter} /> {/* Dynamically update view */}
-        
+
+      <MapContainer
+        center={mapCenter}
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <ChangeView center={mapCenter} /> 
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-
-        <LocationMarker onLocationSelect={(lat, lng) => setMapCenter([lat, lng])} />
+        <LocationMarker
+          onLocationSelect={(lat, lng) => {
+            setSelectedLocation([lat, lng]);
+            console.log("hi", selectedLocation);
+          }}
+        />
       </MapContainer>
     </div>
   );

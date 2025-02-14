@@ -5,7 +5,8 @@ export class LocationService {
   async getLocationCoordinates(location) {
     try {
       const res = await axios.post(
-        `${server.serverUrl}/location/getCoordinates`
+        `${server.serverUrl}/location/getCoordinates`,
+        location
       );
       if (res.status == 200) return res;
       else throw error;

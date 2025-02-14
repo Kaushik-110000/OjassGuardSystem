@@ -7,7 +7,7 @@ axios.defaults.withCredentials = true;
 
 const getCoordinates = asyncHandler(async (req, res) => {
   const { location } = req.body; // Extract location from request body
-
+  console.log(req.body);
   if (!location) {
     return res.status(400).json(new ApiError("Location is required"));
   }

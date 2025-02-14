@@ -11,6 +11,7 @@ import {
   LoginUser,
   LoginGuard,
   UserDashboard,
+  Map,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/guard/g/:username",
         element: <UserDashboard />,
+      },
+      {
+        path: "/locatemap",
+        element: <Map />,
       },
     ],
   },
