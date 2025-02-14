@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Guard } from "../models/guard.model.js";
 import { Complain } from "../models/complain.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Appreciation } from "../models/appreciation.model.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 
@@ -229,7 +230,7 @@ const authoriseGuard = asyncHandler(async (req, res) => {
     complain: complain,
     guard: guardId,
   });
-  
+
   res
     .status(200)
     .json(
@@ -251,6 +252,38 @@ const getUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User retrieved successfully"));
 });
 
+const appreciateGuard = asyncHandler(async (req, res) => {
+  if (!req?.user?._id) {
+    throw new ApiError(400, "Your ID is missing");
+  }
+
+  const { message } = req.body; // Changed `complain` to `message`
+  if (!message) {
+    throw new ApiError(400, "You must provide appreciation feedback");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User not found");
+  }
+
+  const { guardId } = req.params;
+  if (!guardId) throw new ApiError(400, "Guard ID is missing");
+
+  const guard = await Guard.findById(guardId);
+  if (!guard) throw new ApiError(404, "Guard not found");
+
+  // Instead of flagging the guard as unauthorized, we just record appreciation
+  const appreciation = await Appreciation.create({
+    message: message,
+    guard: guardId,
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, appreciation, "Guard appreciated successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -260,4 +293,5 @@ export {
   checkRefreshToken,
   getUser,
   authoriseGuard,
+  appreciateGuard,
 };
