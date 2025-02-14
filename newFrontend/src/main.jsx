@@ -10,8 +10,10 @@ import {
   RegisterGuard,
   LoginUser,
   LoginGuard,
-  UserDashboard,
   Map,
+  GuardDashboard,
+  AdminDashboard,
+  UserDashboard,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
 const router = createBrowserRouter([
@@ -33,12 +35,20 @@ const router = createBrowserRouter([
         element: <LoginUser />,
       },
       {
+        path: "/user/u/:username",
+        element: <UserDashboard />,
+      },
+      {
         path: "/guard/login",
         element: <LoginGuard />,
       },
       {
         path: "/guard/g/:username",
-        element: <UserDashboard />,
+        element: <GuardDashboard />,
+      },
+      {
+        path: "/admin",
+        element: <AdminDashboard />,
       },
       {
         path: "/locatemap",

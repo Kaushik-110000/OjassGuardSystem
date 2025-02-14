@@ -83,7 +83,7 @@ function RegisterGuard() {
       const user = await authService.registerGuard(data);
       if (user) {
         alert("Account created successfully! You can now log in.");
-        navigate("/login");
+        navigate("/guard/login");
       }
     } catch (error) {
       setButtonData("Register");

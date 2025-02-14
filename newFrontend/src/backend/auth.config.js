@@ -124,9 +124,18 @@ export class Authservice {
     }
   }
 
-  async logout() {
+  async logoutUser() {
     try {
-      const res = await axios.post(`${server.serverUrl}/users/logout`);
+      const res = await axios.post(`${server.serverUrl}/user/logout`);
+      if (res.status == 200) return res;
+      else throw error;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  async logoutGuard() {
+    try {
+      const res = await axios.post(`${server.serverUrl}/guard/logout`);
       if (res.status == 200) return res;
       else throw error;
     } catch (error) {

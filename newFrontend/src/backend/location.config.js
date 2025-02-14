@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+/* eslint-disable no-undef */
 import server from "../conf/conf.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
