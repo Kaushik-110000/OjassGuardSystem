@@ -38,7 +38,7 @@ function ChangeView({ center }) {
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.setView(center, 13);
+      map.setView(center, 25);
     }
   }, [center, map]);
   return null;
@@ -66,6 +66,9 @@ function Map() {
       .then((res) => {
         setAssignedGuards(res.data.data);
         console.log("ass", res.data.data);
+        if (res.data.data?.length > 0)
+          setMapCenter([res.data.data[0].latitude, res.data.data[0].longitude]);
+        console.log("map cen", mapCenter);
       })
       .catch((error) => {
         console.error("Error in fetching ");
@@ -119,7 +122,7 @@ function Map() {
 
   function handleUnassignMent(e) {
     locationservice
-      .removeAssignment({assignmentId:e.currentTarget.id})
+      .removeAssignment({ assignmentId: e.currentTarget.id })
       .then(() => {})
       .catch((err) => {
         console.error(err);
