@@ -53,7 +53,7 @@ export class Authservice {
   async login(data) {
     try {
       const response = await axios.post(
-        `${server.serverUrl}/users/login`,
+        `${server.serverUrl}/user/login`,
         data,
         {
           withCredentials: true,
@@ -68,8 +68,28 @@ export class Authservice {
 
   async getCurrentUser() {
     try {
+      const response = await axios.get(`${server.serverUrl}/user/current-user`);
+      if (response.status == 200) {
+        const { _id, userName, email, fullName, avatar, refreshToken, role } =
+          response.data.data;
+        return {
+          _id,
+          userName,
+          email,
+          fullName,
+          avatar,
+          refreshToken,
+          role,
+        };
+      } else throw error;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async getCurrentGuard() {
+    try {
       const response = await axios.get(
-        `${server.serverUrl}/users/current/current-user`
+        `${server.serverUrl}/guard/current-guard`
       );
       if (response.status == 200) {
         const { _id, userName, email, fullName, avatar, refreshToken, role } =

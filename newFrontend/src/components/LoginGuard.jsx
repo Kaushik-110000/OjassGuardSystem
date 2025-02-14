@@ -25,7 +25,7 @@ function LoginUser() {
       const formData = { userName, email, password };
       await authService.login(formData);
 
-      const user = await authService.getCurrentUser();
+      const user = await authService.getCurrentGuard();
       console.log(user);
       
       if (user) {
@@ -33,7 +33,7 @@ function LoginUser() {
         setUserName("");
         setEmail("");
         setPassword("");
-        navigate(`/user/${user.userName}`);
+        navigate(`/guard/${user.userName}`);
       }
     } catch (error) {
       setButtonData("Login");
