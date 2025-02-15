@@ -26,7 +26,7 @@ const getRatings = asyncHandler(async (req, res) => {
       $addFields: {
         Complaints: { $size: "$Complaints" },
         Appreciations: { $size: "$Appreciations" },
-        Shift_Completion_Percentage: 85, // Default value
+        Shift_Completion_Percentage: "$workPercent", // Default value
         Work_Experience_Years: {
           $floor: {
             $divide: [

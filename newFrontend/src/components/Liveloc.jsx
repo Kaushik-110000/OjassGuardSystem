@@ -126,8 +126,8 @@ function Liveloc({ locationId }) {
     }
 
     const totalDuration = toTime - fromTime;
-    const currentProgress = (totalInsideTime / totalDuration) * 100;
-    setProgress(Math.min(currentProgress, 100));
+    const currentProgress = (now - fromTime / totalDuration) * 100;
+    setProgress(currentProgress > 0 ? Math.min(currentProgress, 100) : 0);
   };
 
   const handleComplete = () => {

@@ -111,7 +111,7 @@ function AdminDashboard() {
               <li
                 onClick={handleTakeAdminToUser}
                 className={`p-3 justify rounded-lg text-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 ${
-                  activeTab === "manageGuards"
+                  activeTab === ""
                     ? darkMode
                       ? "bg-gray-700 text-white shadow-lg scale-105"
                       : "bg-blue-700 text-white shadow-lg scale-105"
