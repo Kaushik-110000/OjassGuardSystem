@@ -14,28 +14,49 @@ function AdminDashboard() {
     navigate("/user/login");
   };
 
+  const handleTakeAdminToUser = async () => {
+    const user = await authservice.getCurrentUser();
+
+    if (user.role === "admin") {
+      navigate(`/user/u/${user._id}`);
+    }
+  };
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
   return (
-    <div className={`flex w-screen min-h-screen  transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
-      
+    <div
+      className={`flex w-screen min-h-screen  transition-all duration-300 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }`}
+    >
       {/* Sidebar */}
-      <aside className={`w-72 h-screen p-6 flex flex-col justify-between transition-all duration-300 ${darkMode ? "bg-gradient-to-b from-gray-800 to-gray-900" : "bg-gradient-to-b from-blue-800 to-blue-900 text-white"} shadow-xl rounded-r-lg`}>
+      <aside
+        className={`w-72 h-screen p-6 flex flex-col justify-between transition-all duration-300 ${
+          darkMode
+            ? "bg-gradient-to-b from-gray-800 to-gray-900"
+            : "bg-gradient-to-b from-blue-800 to-blue-900 text-white"
+        } shadow-xl rounded-r-lg`}
+      >
         <div>
           {/* Dashboard Logo / Header */}
           <div className="flex items-center justify-center gap-2 mb-10">
             <FiShield size={28} className="text-yellow-500" />
             <h2 className="text-3xl font-extrabold tracking-wide">Admin</h2>
           </div>
-          
+
           {/* Dark Mode Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="flex items-center justify-center w-full py-3 mb-6 rounded-lg text-lg font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 text-white shadow-md"
           >
-            {darkMode ? <FiSun size={20} className="mr-2 text-yellow-400" /> : <FiMoon size={20} className="mr-2 text-gray-200" />}
+            {darkMode ? (
+              <FiSun size={20} className="mr-2 text-yellow-400" />
+            ) : (
+              <FiMoon size={20} className="mr-2 text-gray-200" />
+            )}
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
 
@@ -62,6 +83,12 @@ function AdminDashboard() {
         </div>
 
         {/* Logout Button */}
+        <button
+          onClick={handleTakeAdminToUser}
+          className="flex items-center justify-center space-x-2 w-full py-3 text-lg font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300 shadow-md"
+        >
+          <span>User Dashboard</span>
+        </button>
         <button
           onClick={handleLogout}
           className="flex items-center justify-center space-x-2 w-full py-3 text-lg font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300 shadow-md"

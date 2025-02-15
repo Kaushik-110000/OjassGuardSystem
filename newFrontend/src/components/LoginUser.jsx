@@ -26,13 +26,17 @@ function LoginUser() {
       await authService.loginUser(formData);
 
       const user = await authService.getCurrentUser();
-      
+
       if (user) {
         dispatch(storeLogin({ userData: user }));
         setUserName("");
         setEmail("");
         setPassword("");
-        navigate(`/user/u/${user.userName}`);
+        if (user.role === "admin") {
+          navigate(`/admin`);
+        } else {
+          navigate(`/user/u/${user.userName}`);
+        }
       }
     } catch (error) {
       setButtonData("Login");
@@ -47,7 +51,7 @@ function LoginUser() {
         <p className="mt-2 text-center text-base text-white/60">
           Don't have an account?&nbsp;
           <Link
-            to="/register"
+            to="/user/register"
             className="font-medium text-blue-400 transition-all duration-200 hover:underline"
           >
             Create

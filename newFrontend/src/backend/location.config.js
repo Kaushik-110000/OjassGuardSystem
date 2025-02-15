@@ -40,8 +40,7 @@ export class LocationService {
     }
   }
 
-  async getSingleAssignment(assignmentId ) {
-    console.log("la", assignmentId);
+  async getSingleAssignment(assignmentId) {
     try {
       const res = await axios.get(
         `${server.serverUrl}/location/getAssignment/${assignmentId}`

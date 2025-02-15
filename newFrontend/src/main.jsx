@@ -14,6 +14,7 @@ import {
   GuardDashboard,
   AdminDashboard,
   UserDashboard,
+  Home,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
 import Liveloc from "./components/Liveloc.jsx";
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <Error />,
     children: [
+      { path: "/landing", element: <Home /> },
       {
         path: "/user/register",
         element: <RegisterUser />,

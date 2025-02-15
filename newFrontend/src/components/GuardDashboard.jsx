@@ -24,9 +24,7 @@ function GuardDashboard() {
 
   useEffect(() => {
     guardService.getSingleGuardAssignment().then((res) => {
-      console.log(res.data.data);
       setDeploymentID(res.data?.data[0]?._id);
-      console.log("dep", res.data.data[0]._id);
     });
   });
 

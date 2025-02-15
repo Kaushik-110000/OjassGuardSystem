@@ -5,6 +5,7 @@ import LoginGuard from "./LoginGuard.jsx";
 import UserDashboard from "./UserDashboard.jsx";
 import GuardDashboard from "./GuardDashboard.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
+import Home from "./Home.jsx";
 import Map from "./Map.jsx";
 export {
   RegisterUser,
@@ -15,4 +16,5 @@ export {
   AdminDashboard,
   Map,
   UserDashboard,
+  Home,
 };

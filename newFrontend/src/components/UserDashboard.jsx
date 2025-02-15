@@ -54,7 +54,8 @@ function UserDashboard() {
   };
 
   const handleAppreciationSubmit = async (guardId) => {
-    if (!appreciation.trim()) return alert("Appreciation message cannot be empty");
+    if (!appreciation.trim())
+      return alert("Appreciation message cannot be empty");
     try {
       await guardService.sendAppreciation(guardId, appreciation);
       alert("Appreciation submitted successfully");
@@ -71,12 +72,13 @@ function UserDashboard() {
 
   return (
     <div
-      className={`p-6 min-h-screen ${
+      className={`p-6 w-screen min-h-screen ${
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       }`}
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-evenly items-center mb-4">
         <h2 className="text-2xl font-bold">All Guards</h2>
+
         <button
           onClick={() => setDarkMode(!darkMode)}
           className="p-2 bg-gray-700 text-white rounded"
@@ -142,7 +144,9 @@ function UserDashboard() {
           <h3 className="text-xl font-semibold mb-2">Lodge a Complaint</h3>
           <textarea
             className={`w-full p-2 border rounded ${
-              darkMode ? "bg-gray-700 text-white border-gray-600" : "border-gray-300"
+              darkMode
+                ? "bg-gray-700 text-white border-gray-600"
+                : "border-gray-300"
             }`}
             placeholder="Enter your complaint here..."
             value={complaint}
@@ -166,7 +170,9 @@ function UserDashboard() {
           <h3 className="text-xl font-semibold mb-2">Submit an Appreciation</h3>
           <textarea
             className={`w-full p-2 border rounded ${
-              darkMode ? "bg-gray-700 text-white border-gray-600" : "border-gray-300"
+              darkMode
+                ? "bg-gray-700 text-white border-gray-600"
+                : "border-gray-300"
             }`}
             placeholder="Enter your appreciation message here..."
             value={appreciation}
