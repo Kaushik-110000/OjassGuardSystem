@@ -1,26 +1,19 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import guardService from "../backend/guard.config.js";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiSun, FiMoon } from "react-icons/fi";
 import { useNavigate } from "react-router";
+import guardService from "../backend/guard.config.js";
 import authservice from "../backend/auth.config.js";
 
 function UserDashboard() {
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [complaint, setComplaint] = useState("");
-  const [appreciation, setAppreciation] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [feedbackType, setFeedbackType] = useState(""); // "complaint" or "appreciation"
   const [darkMode, setDarkMode] = useState(true);
 
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await authservice.logoutUser();
-    navigate("/user/login");
-  };
 
   useEffect(() => {
     async function fetchGuards() {
@@ -40,31 +33,25 @@ function UserDashboard() {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  const handleComplaintSubmit = async (guardId) => {
-    if (!complaint.trim()) return alert("Complaint cannot be empty");
+  const handleFeedbackSubmit = async () => {
+    if (!feedback.trim()) return alert("Message cannot be empty");
     try {
-      await guardService.lodgeComplaint(guardId, complaint);
-      alert("Complaint submitted successfully");
-      setComplaint("");
+      if (feedbackType === "complaint") {
+        await guardService.lodgeComplaint(selectedGuard, feedback);
+      } else {
+        await guardService.sendAppreciation(selectedGuard, feedback);
+      }
+      alert("Feedback submitted successfully");
+      setFeedback("");
       setSelectedGuard(null);
-      setFeedbackType("");
     } catch (error) {
-      alert("Failed to submit complaint");
+      alert("Failed to submit feedback");
     }
   };
 
-  const handleAppreciationSubmit = async (guardId) => {
-    if (!appreciation.trim())
-      return alert("Appreciation message cannot be empty");
-    try {
-      await guardService.sendAppreciation(guardId, appreciation);
-      alert("Appreciation submitted successfully");
-      setAppreciation("");
-      setSelectedGuard(null);
-      setFeedbackType("");
-    } catch (error) {
-      alert("Failed to submit appreciation");
-    }
+  const handleLogout = async () => {
+    await authservice.logoutUser();
+    navigate("/user/login");
   };
 
   if (loading) return <p>Loading guards...</p>;
@@ -72,130 +59,96 @@ function UserDashboard() {
 
   return (
     <div
-      className={`p-6 w-screen min-h-screen ${
+      className={`p-6 w-screen min-h-screen transition-all ${
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       }`}
     >
-      <div className="flex justify-evenly items-center mb-4">
-        <h2 className="text-2xl font-bold">All Guards</h2>
-
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="p-2 bg-gray-700 text-white rounded"
-        >
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
-      </div>
-
-      <div
-        className={`p-4 shadow rounded-lg ${
-          darkMode ? "bg-gray-800 text-white" : "bg-white"
-        }`}
-      >
-        {guards.length === 0 ? (
-          <p>No guards found.</p>
-        ) : (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className={`${darkMode ? "bg-gray-700" : "bg-gray-200"}`}>
-                <th className="border p-2">Name</th>
-                <th className="border p-2">Email</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {guards.map((guard) => (
-                <tr key={guard._id} className="border">
-                  <td className="border p-2">{guard.fullName}</td>
-                  <td className="border p-2">{guard.email}</td>
-                  <td className="border p-2 flex gap-2">
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => {
-                        setSelectedGuard(guard._id);
-                        setFeedbackType("complaint");
-                      }}
-                    >
-                      Lodge Complaint
-                    </button>
-                    <button
-                      className="bg-green-500 text-white px-3 py-1 rounded"
-                      onClick={() => {
-                        setSelectedGuard(guard._id);
-                        setFeedbackType("appreciation");
-                      }}
-                    >
-                      Submit Appreciation
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {selectedGuard && feedbackType === "complaint" && (
-        <div
-          className={`mt-6 p-4 shadow rounded-lg ${
-            darkMode ? "bg-gray-800 text-white" : "bg-white"
-          }`}
-        >
-          <h3 className="text-xl font-semibold mb-2">Lodge a Complaint</h3>
-          <textarea
-            className={`w-full p-2 border rounded ${
-              darkMode
-                ? "bg-gray-700 text-white border-gray-600"
-                : "border-gray-300"
-            }`}
-            placeholder="Enter your complaint here..."
-            value={complaint}
-            onChange={(e) => setComplaint(e.target.value)}
-          />
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6 px-10">
+        <h2 className="text-3xl font-semibold">👮 Security Guards</h2>
+        <div className="flex items-center gap-4">
           <button
-            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => handleComplaintSubmit(selectedGuard)}
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 bg-gray-700 text-white rounded-full shadow-lg hover:bg-gray-600 transition"
           >
-            Submit Complaint
+            {darkMode ? <FiSun size={22} /> : <FiMoon size={22} />}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center bg-red-500 px-4 py-2 text-white rounded-lg hover:bg-red-600 transition"
+          >
+            <FiLogOut size={20} className="mr-2" /> Logout
           </button>
         </div>
-      )}
+      </div>
 
-      {selectedGuard && feedbackType === "appreciation" && (
-        <div
-          className={`mt-6 p-4 shadow rounded-lg ${
-            darkMode ? "bg-gray-800 text-white" : "bg-white"
-          }`}
-        >
-          <h3 className="text-xl font-semibold mb-2">Submit an Appreciation</h3>
-          <textarea
-            className={`w-full p-2 border rounded ${
-              darkMode
-                ? "bg-gray-700 text-white border-gray-600"
-                : "border-gray-300"
-            }`}
-            placeholder="Enter your appreciation message here..."
-            value={appreciation}
-            onChange={(e) => setAppreciation(e.target.value)}
-          />
-          <button
-            className="mt-2 bg-green-500 text-white px-4 py-2 rounded"
-            onClick={() => handleAppreciationSubmit(selectedGuard)}
+      {/* Guard List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {guards.map((guard) => (
+          <div
+            key={guard._id}
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition"
           >
-            Submit Appreciation
-          </button>
+            <h3 className="text-lg font-semibold">{guard.fullName}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {guard.email}
+            </p>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => {
+                  setSelectedGuard(guard._id);
+                  setFeedbackType("complaint");
+                }}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+              >
+                Lodge Complaint
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedGuard(guard._id);
+                  setFeedbackType("appreciation");
+                }}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+              >
+                Appreciate
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Feedback Modal */}
+      {selectedGuard && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-semibold mb-2">
+              {feedbackType === "complaint"
+                ? "Lodge a Complaint"
+                : "Submit an Appreciation"}
+            </h3>
+            <textarea
+              className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+              placeholder={`Enter your ${feedbackType} here...`}
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={handleFeedbackSubmit}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setSelectedGuard(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      <div className="mt-6">
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-2 w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600"
-        >
-          <FiLogOut size={20} />
-          <span>Logout</span>
-        </button>
-      </div>
     </div>
   );
 }

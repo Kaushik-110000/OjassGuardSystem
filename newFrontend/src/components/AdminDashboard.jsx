@@ -13,7 +13,7 @@ import authservice from "../backend/auth.config";
 import { useNavigate } from "react-router";
 
 function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState("manageGuards");
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
 
