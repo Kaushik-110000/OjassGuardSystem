@@ -36,10 +36,10 @@ function ManageGuards({ darkMode }) {
   return (
     <div
       className={`p-8 min-h-screen transition-all duration-500 ${
-        darkMode ? "bg-[#023047] text-white" : "bg-[#8ECAE6] text-black"
+        darkMode ? "bg-slate-950 text-white" : "bg-blue-300 text-black"
       }`}
     >
-      <h2 className="text-3xl font-bold mb-6 text-center uppercase tracking-widest bg-[#219EBC] text-white p-4 rounded-lg shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-center font-serif border-2  p-4 rounded-lg shadow-lg">
         Manage Guards
       </h2>
 
@@ -70,9 +70,9 @@ function ManageGuards({ darkMode }) {
               No guards found.
             </p>
           ) : (
-            <table className="w-full border-collapse text-lg shadow-lg overflow-hidden">
+            <table className="w-full border-collapse shadow-lg overflow-hidden">
               <thead>
-                <tr className="text-left text-xl font-semibold bg-[#219EBC] text-white">
+                <tr className="text-left  font-semibold bg-[#219EBC] text-white">
                   <th className="p-4">Name</th>
                   <th className="p-4">Email</th>
                   <th className="p-4">Complains</th>
