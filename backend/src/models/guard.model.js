@@ -72,6 +72,10 @@ const guardSchema = new Schema(
       type: String,
       default: "guard",
     },
+    workPercent: {
+      type: Number,
+      default: 80,
+    },
   },
   { timestamps: true }
 );

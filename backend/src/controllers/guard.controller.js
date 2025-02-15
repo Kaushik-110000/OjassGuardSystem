@@ -342,6 +342,10 @@ const getSingleGuardAssignment = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, deployment, "Found deployment"));
 });
 
+const updateWorkPercent = asyncHandler(async (req, res) => {
+  // const 
+});
+
 export {
   registerGuard,
   loginGuard,
