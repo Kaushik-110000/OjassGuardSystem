@@ -244,11 +244,11 @@ const listAutherisedGuards = asyncHandler(async (req, res) => {
 
 const listUnassignedGuards = asyncHandler(async (req, res) => {
   const data = await Guard.aggregate([
-    {
-      $match: {
-        isApproved: true, // Only fetch approved guards
-      },
-    },
+    // {
+    //   $match: {
+    //     isApproved: true, // Only fetch approved guards
+    //   },
+    // },
     {
       $lookup: {
         from: "locations", // Refers to the 'Location' collection

@@ -12,7 +12,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import locationservice from "../backend/location.config.js";
 import guardService from "../backend/guard.config.js";
-
+import otherServices from "../backend/others.config.js";
 // Define custom icon for assigned guards
 const guardIcon = new L.Icon({
   iconUrl: "/policeman.png", // Example guard icon
@@ -63,7 +63,7 @@ function Map() {
   const [assignedGuards, setAssignedGuards] = useState([]);
   const [duration, setDuration] = useState(6);
   const [from, setFrom] = useState("");
-
+  const [ratings, setRatings] = useState([]);
   useEffect(() => {
     guardService
       .ListUnassignedGuard()
@@ -86,6 +86,11 @@ function Map() {
       .catch((error) => {
         console.error("Error fetching assigned guards:", error);
       });
+
+    otherServices.getratings().then((res) => {
+      setRatings(res.data.data);
+      console.log(res.data.data);
+    });
   }, []);
 
   useEffect(() => {
@@ -259,19 +264,32 @@ function Map() {
             {guards.map((guard) => (
               <li
                 key={guard._id}
-                className={`p-2 px-4 transition-all duration-500 cursor-pointer border-b hover:bg-black ${
+                className={`p-2 px-4 transition-all flex justify-between duration-500 cursor-pointer border-b hover:bg-black ${
                   selectedGuard?.id === guard.id ? "bg-white/30" : ""
                 }`}
                 onClick={() => setSelectedGuard(guard)}
               >
-                {guard.fullName} ({guard.email})
+                <div>
+                  {guard.fullName} ({guard.email})
+                </div>
+                <div>
+                  {ratings.map((rating) => {
+                    if (rating.guard_id.toString() === guard._id.toString()) {
+                      console.log(rating.predicted_rating);
+
+                      return rating.predicted_rating.toFixed(2);
+                    }
+                  })}
+                  {/* 67af390b6188073298ad3343 */}
+                </div>
+                {/* //add a star here */}
               </li>
             ))}
           </ul>
         </div>
         <div className="flex items-center justify-center mt-4 p-2 gap-4 w-md bg-black/80 rounded-lg">
           <div className="w-full max-w-md rounded-lg shadow-lg p-2 text-xs font-bold">
-            <label>From Time :  </label>
+            <label>From Time : </label>
             <input
               type="datetime-local"
               value={from}
@@ -291,7 +309,7 @@ function Map() {
             className="bg-green-600 w-40 text-white rounded-lg hover:bg-green-700"
             onClick={handleFinalSubmit}
           >
-            ✅  Submit
+            ✅ Submit
           </button>
         </div>
 
