@@ -39,7 +39,7 @@ export class LocationService {
       throw error;
     }
   }
-
+  
   async getSingleAssignment(assignmentId) {
     try {
       const res = await axios.get(

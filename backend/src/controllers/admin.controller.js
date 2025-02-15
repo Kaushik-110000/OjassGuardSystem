@@ -32,17 +32,16 @@ const authoriseGuard = asyncHandler(async (req, res) => {
   await guard.save();
 
   // Find and delete complaints related to this guard
-  const deletedComplaints = await Complain.deleteMany({ guard: guardId });
+  // const deletedComplaints = await Complain.deleteMany({ guard: guardId });
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { guard, deletedComplaints },
-        "Guard authorised successfully and related complaints deleted"
-      )
-    );
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      // { guard, deletedComplaints },
+      { guard },
+      "Guard authorised successfully and related complaints deleted"
+    )
+  );
 });
 
 const rejectGuard = asyncHandler(async (req, res) => {
@@ -109,14 +108,17 @@ const listComplain = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Guard ID");
   }
 
-  const data = await Complain.find({ guard: new mongoose.Types.ObjectId(guardId) });
+  const data = await Complain.find({
+    guard: new mongoose.Types.ObjectId(guardId),
+  });
 
   if (!data.length) {
-    return res.status(200).json(new ApiResponse(200, [], "No complaints found"));
+    return res
+      .status(200)
+      .json(new ApiResponse(200, [], "No complaints found"));
   }
 
   return res.status(200).json(new ApiResponse(200, data, "Found complaints"));
 });
-
 
 export { authoriseGuard, listUnauthorisedGuards, rejectGuard, listComplain };
