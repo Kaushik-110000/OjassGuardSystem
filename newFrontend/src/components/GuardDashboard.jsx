@@ -25,7 +25,6 @@ function GuardDashboard() {
   const [userId, setUserId] = useState(null);
   useEffect(() => {
     guardService.getSingleGuardAssignment().then((res) => {
-      console.log(res.data.data);
       setDeploymentID(res.data?.data[0]?._id);
       console.log("dep", res.data.data[0]);
       setUserId(res.data.data[0].guard);

@@ -47,7 +47,7 @@ function LoginGuard() {
         <p className="mt-2 text-center text-base text-white/60">
           Don't have an account?&nbsp;
           <Link
-            to="/register"
+            to="/guard/register"
             className="font-medium text-blue-400 transition-all duration-200 hover:underline"
           >
             Create

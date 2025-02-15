@@ -98,7 +98,7 @@ function RegisterGuard() {
         <p className="mt-2 text-center text-base text-white/60">
           Already have an account?&nbsp;
           <Link
-            to="/login"
+            to="/guard/login"
             className="font-medium text-blue-400 transition-all duration-200 hover:underline"
           >
             Sign In
