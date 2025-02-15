@@ -189,133 +189,131 @@ function Map() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 py-6">
-      <h1 className="text-2xl font-semibold text-gray-700 mb-4">
-        📍 Location Tracker
-      </h1>
+    <div className="flex items-center w-full min-h-screen gap-10 bg-black py-6 px-16">
+      <div className=" w-[60vw] flex flex-col justify-center items-center">
+        <h1 className="text-2xl font-semibold text-gray-700 mb-4">
+          📍 Location Tracker
+        </h1>
 
-      <div className="flex w-3/4 max-w-md mb-4">
-        <input
-          type="text"
-          placeholder="Enter location..."
-          // onBlur={(e) => handleLocationSearch(e.target.value)}
-          className="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={() =>
-            handleLocationSearch(document.querySelector("input").value)
-          }
-          className="px-4 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
-        >
-          🔍 Search
-        </button>
-      </div>
-
-      {loading && (
-        <p className="text-blue-600 font-semibold">⏳ Fetching location...</p>
-      )}
-
-      <div className="w-3/4 h-[500px] rounded-xl overflow-hidden shadow-lg">
-        <MapContainer center={mapCenter} zoom={35} className="h-full w-full">
-          <ChangeView center={mapCenter} />
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        <div className="flex w-3/4 max-w-md mb-4">
+          <input
+            type="text"
+            placeholder="Enter location..."
+            // onBlur={(e) => handleLocationSearch(e.target.value)}
+            className="flex-1 p-2  rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-
-          {/* User Clickable Marker */}
-          <LocationMarker
-            onLocationSelect={(lat, lng) => setSelectedLocation([lat, lng])}
-          />
-
-          {/* Assigned Guards Markers */}
-          {assignedGuards.map((guard) => (
-            <Marker
-              key={guard.guardDetails._id}
-              position={[guard.latitude, guard.longitude]}
-              icon={guardIcon}
-            >
-              <Popup
-                id={guard.guardDetails._id}
-                // onClick={console.log(guard.guardDetails._id)}
+          <button
+            onClick={() =>
+              handleLocationSearch(document.querySelector("input").value)
+            }
+            className="px-4 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
+          >
+            🔍 Search
+          </button>
+        </div>
+        {loading && (
+          <p className="text-blue-600 font-semibold">⏳ Fetching location...</p>
+        )}
+        <div className="w-full h-[500px] rounded-xl overflow-hidden shadow-lg brightness-90">
+          <MapContainer center={mapCenter} zoom={35} className="h-full w-full">
+            <ChangeView center={mapCenter} />
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {/* User Clickable Marker */}
+            <LocationMarker
+              onLocationSelect={(lat, lng) => setSelectedLocation([lat, lng])}
+            />
+            {/* Assigned Guards Markers */}
+            {assignedGuards.map((guard) => (
+              <Marker
+                key={guard.guardDetails._id}
+                position={[guard.latitude, guard.longitude]}
+                icon={guardIcon}
               >
-                🛡️ {guard.guardDetails.fullName} <br />
-                ✉️ {guard.guardDetails.email} <br />
-                📍 {guard.latitude}, {guard.longitude}
-                <button id={guard._id} onClick={handleUnassignMent}>
-                  Remove
-                </button>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+                <Popup
+                  id={guard.guardDetails._id}
+                  // onClick={console.log(guard.guardDetails._id)}
+                >
+                  🛡️ {guard.guardDetails.fullName} <br />
+                  ✉️ {guard.guardDetails.email} <br />
+                  📍 {guard.latitude}, {guard.longitude}
+                  <button id={guard._id} onClick={handleUnassignMent}>
+                    Remove
+                  </button>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
       </div>
 
       {/* List of Guards */}
-      <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-2">🛡️ Select a Guard</h2>
-        <ul>
-          {guards.map((guard) => (
-            <li
-              key={guard._id}
-              className={`p-2 cursor-pointer border-b hover:bg-gray-200 ${
-                selectedGuard?.id === guard.id ? "bg-blue-300" : ""
-              }`}
-              onClick={() => setSelectedGuard(guard)}
-            >
-              {guard.fullName} ({guard.email})
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Final Submit Button */}
-      <div className="flex items-center justify-center mt-4 gap-16">
-        <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
-          <label className="block text-gray-700">From Time:</label>
-          <input
-            type="datetime-local"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
-          />
-
-          <label className="block text-gray-700">Duration (in hours):</label>
-          <input
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
-          />
+      <div className=" w-[40vw] flex flex-col justify-center items-center ">
+        <div className="w-full max-w-md mt-4  rounded-lg shadow-lg overflow-hidden ">
+          <h2 className="text-lg font-semibold mb-2 bg-amber-400">
+            🛡️ Assign Guards
+          </h2>
+          <ul className="hover:*:hover:opacity-100 hover:*:hover:scale-105 transition-all duration-500 *:opacity-75 ">
+            {guards.map((guard) => (
+              <li
+                key={guard._id}
+                className={`p-2 px-4 transition-all duration-500 cursor-pointer border-b hover:bg-black ${
+                  selectedGuard?.id === guard.id ? "bg-white/30" : ""
+                }`}
+                onClick={() => setSelectedGuard(guard)}
+              >
+                {guard.fullName} ({guard.email})
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex items-center justify-center mt-4 p-2 gap-4 w-md bg-black/80 rounded-lg">
+          <div className="w-full max-w-md rounded-lg shadow-lg p-2 text-xs font-bold">
+            <label>From Time :  </label>
+            <input
+              type="datetime-local"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              className="h-8 p-2 border border-gray-300 rounded-lg mb-2"
+            />
+            <br />
+            <label>Duration (in hours) : </label>
+            <input
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              className="h-8 w-20 p-2 border border-gray-300 rounded-lg mb-2"
+            />
+          </div>
+          <button
+            className="bg-green-600 w-40 text-white rounded-lg hover:bg-green-700"
+            onClick={handleFinalSubmit}
+          >
+            ✅  Submit
+          </button>
         </div>
 
-        {/* Submit Button */}
-
-        <button
-          onClick={handleFinalSubmit}
-          className=" px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-        >
-          ✅ Final Submit
-        </button>
-      </div>
-
-      {/* Assigned Guards List */}
-      <div className="w-3/4 max-w-md mt-4 p-4 bg-white rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-2">🛡️ Assigned Guards</h2>
-        <ul>
-          {assignedGuards.map((guard) => (
-            <li key={guard.guardDetails._id} className="p-2 border-b">
-              {guard.guardDetails.fullName} ({guard.guardDetails.email})
-              <button
-                id={guard._id}
-                onClick={handleUnassignMent}
-                className="ml-4 px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                ❌ Unassign
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="w-full max-w-md my-8 rounded-lg shadow-lg overflow-hidden">
+          <h2 className="text-lg font-semibold mb-2 bg-amber-400">
+            🛡️ Assigned Guards
+          </h2>
+          <ul className="*:flex *:justify-between *:items-center *:w-full">
+            {assignedGuards.map((guard) => (
+              <li key={guard.guardDetails._id} className="p-2 border-b">
+                {guard.guardDetails.fullName} ({guard.guardDetails.email})
+                <button
+                  id={guard._id}
+                  onClick={handleUnassignMent}
+                  className="ml-4 px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  ❌ Unassign
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
