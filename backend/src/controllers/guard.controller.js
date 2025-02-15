@@ -343,7 +343,34 @@ const getSingleGuardAssignment = asyncHandler(async (req, res) => {
 });
 
 const updateWorkPercent = asyncHandler(async (req, res) => {
-  // const 
+  const guardId = req.user?._id;
+  if (!guardId) {
+    throw new ApiError(404, "Guard not found or not authenticated");
+  }
+
+  const { workPercent } = req.body;
+  if (workPercent === undefined || workPercent < 0 || workPercent > 100) {
+    throw new ApiError(
+      400,
+      "Invalid work percent value (must be between 0-100)"
+    );
+  }
+
+  const updatedGuard = await Guard.findByIdAndUpdate(
+    guardId,
+    { workPercent },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  if (!updatedGuard) {
+    throw new ApiError(500, "Failed to update work percent");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedGuard, "Work percent updated successfully")
+    );
 });
 
 export {
@@ -358,4 +385,5 @@ export {
   listUnassignedGuards,
   listAuthorisedGuards,
   getSingleGuardAssignment,
+  updateWorkPercent,
 };
