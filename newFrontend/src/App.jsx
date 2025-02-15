@@ -57,7 +57,7 @@ function App() {
   return !loading ? (
     <>
       <Container>
-        <Header />
+        {location.pathname === "/" && <Header />}
         {/* {location.pathname === "/" && <Error />} */}
         <Outlet />
       </Container>
