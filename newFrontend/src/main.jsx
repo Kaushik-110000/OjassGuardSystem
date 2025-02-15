@@ -14,7 +14,6 @@ import {
   GuardDashboard,
   AdminDashboard,
   UserDashboard,
-  Home,
   Complains,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
@@ -25,7 +24,6 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <Error />,
     children: [
-      { path: "/landing", element: <Home /> },
       {
         path: "/user/register",
         element: <RegisterUser />,
