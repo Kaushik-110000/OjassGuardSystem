@@ -99,4 +99,60 @@ const getALocation = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, location, "Fetched assignment"));
 });
-export { getCoordinates, assignLocation, unassignTheGuard, getALocation };
+
+const getLatestAssignment = asyncHandler(async (req, res) => {
+  let { guardId } = req.params;
+  
+  // Trim guardId to remove unwanted spaces or newlines
+  guardId = guardId.trim();
+
+  console.log({ guardId }, "req");
+
+  if (!guardId) {
+    throw new ApiError(400, "Guard ID is missing");
+  }
+
+  // Validate ObjectId format
+  if (!mongoose.Types.ObjectId.isValid(guardId)) {
+    throw new ApiError(400, "Invalid Guard ID format");
+  }
+
+  const latestAssignment = await Guard.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(guardId) },
+    },
+    {
+      $lookup: {
+        from: "locations",
+        localField: "_id",
+        foreignField: "guard",
+        as: "assignmentDetails",
+      },
+    },
+    {
+      $unwind: "$assignmentDetails", // Convert assignmentDetails array into separate documents
+    },
+    {
+      $sort: { "assignmentDetails.updatedAt": -1 }, // Sort by latest updated document
+    },
+    {
+      $limit: 1, // Get only the latest updated document
+    },
+  ]);
+
+  if (!latestAssignment.length) {
+    throw new ApiError(404, "No assignments found for this guard");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, latestAssignment[0], "Fetched latest guard assignment"));
+});
+
+export {
+  getCoordinates,
+  assignLocation,
+  unassignTheGuard,
+  getALocation,
+  getLatestAssignment,
+};
