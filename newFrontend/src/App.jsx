@@ -17,43 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   authservice
-  //     .checkRefresh()
-  //     .then((res) => {
-  //       if (res.status == 200) {
-  //         authservice
-  //           .refreshTokens()
-  //           .then(() => {
-  //             authservice
-  //               .getCurrentUser()
-  //               .then((res) => {
-  //                 if (res?._id) {
-  //                   dispatch(storeLogin({ userData: res }));
-  //                   navigate(`/${res.userName}`);
-  //                 } else {
-  //                   dispatch(storeLogout());
-  //                 }
-  //               })
-  //               .catch(() => {
-  //                 dispatch(storeLogout());
-  //                 navigate("/");
-  //               })
-  //               .finally(() => setLoading(false));
-  //           })
-  //           .catch(() => {
-  //             dispatch(storeLogout());
-  //             navigate("/");
-  //           });
-  //       } else {
-  //         dispatch(storeLogout());
-  //       }
-  //     })
-  //     .catch(() => {
-  //       dispatch(storeLogout());
-  //       navigate("/");
-  //     });
-  // }, []);
+  
 
   return !loading ? (
     <>
