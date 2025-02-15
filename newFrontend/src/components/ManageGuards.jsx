@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import adminservice from "../backend/admin.config";
 import errorTeller from "../backend/errorTeller";
+import { useNavigate } from "react-router";
 
 function ManageGuards({ darkMode }) {
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchGuards = async () => {
       try {
@@ -74,7 +75,7 @@ function ManageGuards({ darkMode }) {
                 <tr className="text-left text-xl font-semibold bg-[#219EBC] text-white">
                   <th className="p-4">Name</th>
                   <th className="p-4">Email</th>
-                  <th className="p-4">Status</th>
+                  <th className="p-4">Complains</th>
                   <th className="p-4 text-center">Actions</th>
                 </tr>
               </thead>
@@ -93,8 +94,12 @@ function ManageGuards({ darkMode }) {
                             ? "bg-[#FFB703] text-white"
                             : "bg-yellow-500 text-black"
                         }`}
+                        id={guard._id}
+                        onClick={(e) =>
+                          navigate(`/complains/${e.currentTarget.id}`)
+                        }
                       >
-                        {guard.isApproved ? "Approved" : "Pending"}
+                        {guard.isApproved ? "Approved" : "View Complains"}
                       </span>
                     </td>
                     <td className="p-4 text-center">

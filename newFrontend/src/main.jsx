@@ -15,6 +15,7 @@ import {
   AdminDashboard,
   UserDashboard,
   Home,
+  Complains,
 } from "./components/index.js";
 import Error from "./components/Error.jsx";
 import Liveloc from "./components/Liveloc.jsx";
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "/liveloc",
         element: <Liveloc />,
+      },
+      {
+        path: "/complains/:guardId",
+        element: <Complains />,
       },
     ],
   },
