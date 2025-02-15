@@ -9,7 +9,8 @@ import {
   getGuard,
   listAutherisedGuards,
   listUnassignedGuards,
-  listAuthorisedGuards
+  listAuthorisedGuards,
+  getSingleGuardAssignment,
 } from "../controllers/guard.controller.js";
 
 import { upload } from "../middleware/multer.middleware.js";
@@ -43,5 +44,6 @@ router.get("/check-refresh", checkRefreshToken);
 router.get("/single/:userName", getGuard);
 router.get("/list", listAutherisedGuards);
 router.get("/unassignedGuardsList", listUnassignedGuards);
-router.get("/assignedGuards",listAuthorisedGuards)
+router.get("/assignedGuards", listAuthorisedGuards);
+router.get("/getSingleGuardAssignment",verifyJWTguard, getSingleGuardAssignment);
 export default router;

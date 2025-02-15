@@ -67,6 +67,18 @@ export class GuardService {
       throw error;
     }
   }
+
+  async getSingleGuardAssignment() {
+    try {
+      const res = await axios.get(
+        `${server.serverUrl}/guard/getSingleGuardAssignment`
+      );
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const guardService = new GuardService();
