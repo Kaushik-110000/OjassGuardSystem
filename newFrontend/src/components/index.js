@@ -7,6 +7,7 @@ import GuardDashboard from "./GuardDashboard.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
 import Home from "./Home.jsx";
 import Map from "./Map.jsx";
+import Complains from "./Complains.jsx";
 export {
   RegisterUser,
   RegisterGuard,
@@ -17,4 +18,5 @@ export {
   Map,
   UserDashboard,
   Home,
+  Complains,
 };

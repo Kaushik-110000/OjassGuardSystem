@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import adminservice from "../backend/admin.config";
 import errorTeller from "../backend/errorTeller";
+import { useNavigate } from "react-router";
 
 function ManageGuards({ darkMode }) {
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchGuards = async () => {
       try {
@@ -59,33 +60,46 @@ function ManageGuards({ darkMode }) {
       {!loading && !error && (
         <div
           className={`p-6 rounded-xl shadow-lg transition-all duration-500 ${
-            darkMode ? "bg-[#023047] text-white border border-[#219EBC]" : "bg-white"
+            darkMode
+              ? "bg-[#023047] text-white border border-[#219EBC]"
+              : "bg-white"
           }`}
         >
           {guards.length === 0 ? (
-            <p className="text-center text-lg font-semibold">No guards found.</p>
+            <p className="text-center text-lg font-semibold">
+              No guards found.
+            </p>
           ) : (
             <table className="w-full border-collapse text-lg shadow-lg overflow-hidden">
               <thead>
                 <tr className="text-left text-xl font-semibold bg-[#219EBC] text-white">
                   <th className="p-4">Name</th>
                   <th className="p-4">Email</th>
-                  <th className="p-4">Status</th>
+                  <th className="p-4">Complains</th>
                   <th className="p-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {guards.map((guard) => (
-                  <tr key={guard._id} className="border-b transition-all duration-300 hover:bg-[#8ECAE6]">
+                  <tr
+                    key={guard._id}
+                    className="border-b transition-all duration-300 hover:bg-[#8ECAE6]"
+                  >
                     <td className="p-4">{guard.fullName}</td>
                     <td className="p-4">{guard.email}</td>
                     <td className="p-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-bold ${
-                          guard.isApproved ? "bg-[#FFB703] text-white" : "bg-yellow-500 text-black"
+                          guard.isApproved
+                            ? "bg-[#FFB703] text-white"
+                            : "bg-yellow-500 text-black"
                         }`}
+                        id={guard._id}
+                        onClick={(e) =>
+                          navigate(`/complains/${e.currentTarget.id}`)
+                        }
                       >
-                        {guard.isApproved ? "Approved" : "Pending"}
+                        {guard.isApproved ? "Approved" : "View Complains"}
                       </span>
                     </td>
                     <td className="p-4 text-center">
