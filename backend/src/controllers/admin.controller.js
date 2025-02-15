@@ -7,6 +7,7 @@ import { Complain } from "../models/complain.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
+import mongoose from "mongoose";
 
 const authoriseGuard = asyncHandler(async (req, res) => {
   if (!req?.user?._id) {
@@ -90,7 +91,7 @@ const listUnauthorisedGuards = asyncHandler(async (req, res) => {
   if (!unauthorisedGuards.length)
     throw new ApiError(404, "No unauthorised guards found");
 
-  res
+  return res
     .status(200)
     .json(
       new ApiResponse(
@@ -101,4 +102,21 @@ const listUnauthorisedGuards = asyncHandler(async (req, res) => {
     );
 });
 
-export { authoriseGuard, listUnauthorisedGuards, rejectGuard };
+const listComplain = asyncHandler(async (req, res) => {
+  const { guardId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(guardId)) {
+    throw new ApiError(400, "Invalid Guard ID");
+  }
+
+  const data = await Complain.find({ guard: new mongoose.Types.ObjectId(guardId) });
+
+  if (!data.length) {
+    return res.status(200).json(new ApiResponse(200, [], "No complaints found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, data, "Found complaints"));
+});
+
+
+export { authoriseGuard, listUnauthorisedGuards, rejectGuard, listComplain };

@@ -59,11 +59,15 @@ function ManageGuards({ darkMode }) {
       {!loading && !error && (
         <div
           className={`p-6 rounded-xl shadow-lg transition-all duration-500 ${
-            darkMode ? "bg-[#023047] text-white border border-[#219EBC]" : "bg-white"
+            darkMode
+              ? "bg-[#023047] text-white border border-[#219EBC]"
+              : "bg-white"
           }`}
         >
           {guards.length === 0 ? (
-            <p className="text-center text-lg font-semibold">No guards found.</p>
+            <p className="text-center text-lg font-semibold">
+              No guards found.
+            </p>
           ) : (
             <table className="w-full border-collapse text-lg shadow-lg overflow-hidden">
               <thead>
@@ -76,13 +80,18 @@ function ManageGuards({ darkMode }) {
               </thead>
               <tbody>
                 {guards.map((guard) => (
-                  <tr key={guard._id} className="border-b transition-all duration-300 hover:bg-[#8ECAE6]">
+                  <tr
+                    key={guard._id}
+                    className="border-b transition-all duration-300 hover:bg-[#8ECAE6]"
+                  >
                     <td className="p-4">{guard.fullName}</td>
                     <td className="p-4">{guard.email}</td>
                     <td className="p-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-bold ${
-                          guard.isApproved ? "bg-[#FFB703] text-white" : "bg-yellow-500 text-black"
+                          guard.isApproved
+                            ? "bg-[#FFB703] text-white"
+                            : "bg-yellow-500 text-black"
                         }`}
                       >
                         {guard.isApproved ? "Approved" : "Pending"}

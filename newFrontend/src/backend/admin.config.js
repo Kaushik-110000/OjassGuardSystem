@@ -31,6 +31,16 @@ export class AdminService {
       throw error;
     }
   }
+
+  async listComplains(id) {
+    const res = await axios.get(`${server.serverUrl}/admin/complains/${id}`);
+    try {
+      if (res) return res;
+      else throw error;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 const adminservice = new AdminService();
 export default adminservice;
