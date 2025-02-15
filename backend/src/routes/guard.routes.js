@@ -16,6 +16,7 @@ import {
 
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWTguard } from "../middleware/auth.middleware.js";
+// import { getRatings } from "../controllers/rating.controller.js";
 
 const router = Router();
 
@@ -52,4 +53,5 @@ router.get(
   getSingleGuardAssignment
 );
 router.post("/updateWork", verifyJWTguard, updateWorkPercent);
+// router.get("/getrating", getRatings);
 export default router;

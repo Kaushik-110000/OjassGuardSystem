@@ -11,7 +11,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import livelocservice from "../backend/liveloc.config.js";
 import locationservice from "../backend/location.config.js";
-
+import guardService from "../backend/guard.config.js";
 const blueIcon = new L.Icon({
   iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
   iconSize: [30, 30],
@@ -21,7 +21,6 @@ const redIcon = new L.Icon({
   iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
   iconSize: [30, 30],
 });
-
 function ChangeView({ center }) {
   const map = useMap();
   useEffect(() => {
@@ -32,29 +31,25 @@ function ChangeView({ center }) {
   return null;
 }
 
-function Liveloc({ locationId }) {
+function Amen({ locationId, guardId }) {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [assignment, setAssignment] = useState(null);
   const [progress, setProgress] = useState(0);
   const [totalInsideTime, setTotalInsideTime] = useState(0);
-  const [lastOutsideTime, setLastOutsideTime] = useState(null);
+  const [totalOutsideTime, setTotalOutsideTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const radius = 65;
 
-  // Fetch assignment data
   useEffect(() => {
     locationservice.getSingleAssignment(locationId).then((res) => {
       setAssignment(res.data.data);
     });
   }, [locationId]);
 
-  // Location tracking and progress calculation
   useEffect(() => {
     let interval;
     if (assignment && !isCompleted) {
-      // Initial check
       getLocation();
-      // Set up periodic checking
       interval = setInterval(getLocation, 60000);
     }
     return () => clearInterval(interval);
@@ -67,7 +62,7 @@ function Liveloc({ locationId }) {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
           sendLocationToServer(latitude, longitude);
-
+          console.log("nav geo", location);
           if (assignment) {
             const inside = checkInsideCircle(
               latitude,
@@ -89,21 +84,17 @@ function Liveloc({ locationId }) {
     const now = Date.now();
     const fromTime = new Date(assignment.from).getTime();
     const toTime = new Date(assignment.to).getTime();
+    console.log("timesss", fromTime, toTime);
 
-    // Don't track if outside assignment timeframe
-    if (now < fromTime || now > toTime) return;
-
-    // Update time counters
+    if (now > toTime) return;
+    let a = true;
     if (inside) {
-      setTotalInsideTime((prev) => prev + 60000); // Add 1 minute
-      setLastOutsideTime(null);
+      setTotalInsideTime((prev) => prev + 60000);
     } else {
-      // Check for consecutive outside time
-      if (lastOutsideTime && now - lastOutsideTime >= 120000) {
+      setTotalOutsideTime((prev) => prev + 60000);
+      if (a) {
         handleOut();
-        setLastOutsideTime(null);
-      } else if (!lastOutsideTime) {
-        setLastOutsideTime(now);
+        a = false;
       }
     }
 
@@ -115,37 +106,27 @@ function Liveloc({ locationId }) {
     const fromTime = new Date(assignment.from).getTime();
     const toTime = new Date(assignment.to).getTime();
 
-    if (now < fromTime) {
-      setProgress(0);
-      return;
-    }
-
     if (now >= toTime) {
       handleComplete();
       return;
     }
-
     const totalDuration = toTime - fromTime;
-    const currentProgress = (totalInsideTime / totalDuration) * 100;
-    setProgress(Math.min(currentProgress, 100));
+    // console.log("hero", now, fromTime, toTime, totalDuration);
+
+    const currentProgress = ((now - fromTime) / totalDuration) * 100;
+    // console.log("hero", currentProgress);
+    setProgress(Math.max(currentProgress, 0));
   };
 
   const handleComplete = () => {
     setIsCompleted(true);
-    const finalProgress =
-      (totalInsideTime /
-        (new Date(assignment.to) - new Date(assignment.from))) *
-      100;
-    console.log(`Work completed. Final progress: ${finalProgress.toFixed(2)}%`);
+    console.log(`Work completed.`);
   };
 
-  const handleOut = () => {
-    alert(
-      "⚠️ Warning: You've been outside the assigned area for more than 2 minutes!"
-    );
+  const handleOut = async () => {
+    await guardService.lodgeComplaint(guardId, "The guard is outside the zone");
   };
 
-  // Helper functions
   const checkInsideCircle = (lat1, lon1, lat2, lon2, radius) => {
     const R = 6371000;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -240,4 +221,4 @@ function Liveloc({ locationId }) {
   );
 }
 
-export default Liveloc;
+export default Amen;

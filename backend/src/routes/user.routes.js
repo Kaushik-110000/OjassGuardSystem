@@ -41,7 +41,7 @@ router.get("/check-refresh", checkRefreshToken);
 // Get user by username
 router.get("/:userName", getUser);
 
-router.post("/reqAuth/:guardId", verifyJWTuser, authoriseGuard);
+router.post("/reqAuth/:guardId", authoriseGuard);
 router.post("/appreciate/:guardId", verifyJWTuser, appreciateGuard);
 
 export default router;

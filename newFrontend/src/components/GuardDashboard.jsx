@@ -12,6 +12,7 @@ import {
 import authService from "../backend/auth.config.js";
 import guardService from "../backend/guard.config.js";
 import LiveLock from "../components/Liveloc.jsx";
+import Amen from "./Amen.jsx";
 function GuardDashboard() {
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
@@ -21,12 +22,13 @@ function GuardDashboard() {
     await authService.logoutGuard();
     navigate("/guard/login");
   };
-
+  const [userId, setUserId] = useState(null);
   useEffect(() => {
     guardService.getSingleGuardAssignment().then((res) => {
       console.log(res.data.data);
       setDeploymentID(res.data?.data[0]?._id);
-      console.log("dep", res.data.data[0]._id);
+      console.log("dep", res.data.data[0]);
+      setUserId(res.data.data[0].guard);
     });
   });
 
@@ -109,7 +111,9 @@ function GuardDashboard() {
             <p className="text-2xl">3</p>
           </div>
         </div>
-        {deploymentId ? <LiveLock locationId={deploymentId} /> : null}
+        {deploymentId ? (
+          <Amen locationId={deploymentId} guardId={userId} />
+        ) : null}
         {/* Recent Activity */}
         <div
           className={`mt-8 ${

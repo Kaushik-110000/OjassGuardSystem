@@ -7,6 +7,8 @@ import { Complain } from "../models/complain.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Appreciation } from "../models/appreciation.model.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 import fs from "fs";
 
 /**
@@ -203,31 +205,27 @@ const checkRefreshToken = asyncHandler(async (req, res) => {
  */
 
 const authoriseGuard = asyncHandler(async (req, res) => {
-  if (!req?.user?._id) {
-    throw new ApiError(400, "your id is missing");
-  }
-
   const { complain } = req.body;
   if (!complain) {
-    throw new ApiError(400, "You must give feedBack");
+    throw new ApiError(400, "You must provide feedback");
   }
 
-  const user = await User.findById(req.user._id);
-  if (!user) {
-    throw new ApiError(400, "User not found");
-  }
-
-  const { guardId } = req.params;
+  let { guardId } = req.params;
   if (!guardId) throw new ApiError(400, "Guard ID is missing");
+
+  // ✅ Check if guardId is a valid ObjectId, if not, create a valid one
+  if (!mongoose.isValidObjectId(guardId)) {
+    guardId = new mongoose.Types.ObjectId(); // Generates a valid ObjectId
+  }
 
   const guard = await Guard.findById(guardId);
   if (!guard) throw new ApiError(404, "Guard not found");
 
-  guard.isApproved = false; // Assuming there is an `isAuthorised` field
+  guard.isApproved = false;
   await guard.save();
 
   const comp = await Complain.create({
-    complain: complain,
+    complain,
     guard: guardId,
   });
 
