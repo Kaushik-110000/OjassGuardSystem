@@ -46,7 +46,7 @@ function RegisterUser() {
       console.log(user);
       if (user) {
         alert("Account created successfully! You can now log in.");
-        navigate("/login");
+        navigate("/user/login");
       }
     } catch (error) {
       setButtonData("Register");
