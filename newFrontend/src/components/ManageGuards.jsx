@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import adminservice from "../backend/admin.config";
 import errorTeller from "../backend/errorTeller";
 
@@ -12,13 +11,12 @@ function ManageGuards({ darkMode }) {
     const fetchGuards = async () => {
       try {
         const guards = await adminservice.getUnauthorisedGuards();
-
         if (guards) {
           setGuards(guards.data.data);
-          setLoading(false);
         }
       } catch (error) {
         setError(errorTeller(error));
+      } finally {
         setLoading(false);
       }
     };
@@ -34,59 +32,83 @@ function ManageGuards({ darkMode }) {
     }
   };
 
-  if (loading) return <p>Loading guards...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-
   return (
     <div
-      className={`p-6 ${!darkMode ? "bg-gray-100" : "bg-black"} min-h-screen `}
+      className={`p-8 min-h-screen transition-all duration-500 ${
+        darkMode ? "bg-[#023047] text-white" : "bg-[#8ECAE6] text-black"
+      }`}
     >
-      <h2 className="text-2xl font-bold mb-4">Manage Guards</h2>
-      <div
-        className={` p-4 ${
-          !darkMode ? "bg-gray-100" : "bg-black"
-        } shadow rounded-lg`}
-      >
-        {guards.length === 0 ? (
-          <p>No guards found.</p>
-        ) : (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Name</th>
-                <th className="border p-2">Email</th>
-                <th className="border p-2">Status</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {guards.map((guard) => (
-                <tr key={guard._id} className="border">
-                  <td className="border p-2">{guard.fullName}</td>
-                  <td className="border p-2">{guard.email}</td>
-                  <td className="border p-2">
-                    {guard.isApproved ? "Approved" : "Pending"}
-                  </td>
-                  <td className="border p-2">
-                    <button
-                      className="bg-green-500 text-white px-3 py-1 rounded mr-2"
-                      onClick={() => handleApproval(guard._id, true)}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => handleApproval(guard._id, false)}
-                    >
-                      Reject
-                    </button>
-                  </td>
+      <h2 className="text-3xl font-bold mb-6 text-center uppercase tracking-widest bg-[#219EBC] text-white p-4 rounded-lg shadow-lg">
+        Manage Guards
+      </h2>
+
+      {/* Loader */}
+      {loading && (
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#219EBC]"></div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-100 text-red-700 border border-red-400 p-4 rounded-lg mb-6 text-center">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div
+          className={`p-6 rounded-xl shadow-lg transition-all duration-500 ${
+            darkMode ? "bg-[#023047] text-white border border-[#219EBC]" : "bg-white"
+          }`}
+        >
+          {guards.length === 0 ? (
+            <p className="text-center text-lg font-semibold">No guards found.</p>
+          ) : (
+            <table className="w-full border-collapse text-lg shadow-lg overflow-hidden">
+              <thead>
+                <tr className="text-left text-xl font-semibold bg-[#219EBC] text-white">
+                  <th className="p-4">Name</th>
+                  <th className="p-4">Email</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4 text-center">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+              </thead>
+              <tbody>
+                {guards.map((guard) => (
+                  <tr key={guard._id} className="border-b transition-all duration-300 hover:bg-[#8ECAE6]">
+                    <td className="p-4">{guard.fullName}</td>
+                    <td className="p-4">{guard.email}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-bold ${
+                          guard.isApproved ? "bg-[#FFB703] text-white" : "bg-yellow-500 text-black"
+                        }`}
+                      >
+                        {guard.isApproved ? "Approved" : "Pending"}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <button
+                        className="px-4 py-2 bg-[#FFB703] text-white rounded-lg shadow-md hover:bg-[#FB8500] transform hover:scale-105 transition-all duration-300 mr-3"
+                        onClick={() => handleApproval(guard._id, true)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transform hover:scale-105 transition-all duration-300"
+                        onClick={() => handleApproval(guard._id, false)}
+                      >
+                        Reject
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   );
 }

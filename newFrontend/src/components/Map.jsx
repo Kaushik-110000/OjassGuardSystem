@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import  { useState, useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -77,7 +78,6 @@ function Map() {
       .ListAssignedGuards()
       .then((res) => {
         setAssignedGuards(res.data.data);
-        console.log("Assigned Guards:", res.data.data);
 
         if (res.data.data?.length > 0) {
           setMapCenter([res.data.data[0].latitude, res.data.data[0].longitude]);
@@ -176,7 +176,7 @@ function Map() {
         location: locationName,
       });
       if (res?.data?.data) {
-        console.log("res",res.data.data)
+        console.log("res", res.data.data);
         const { latitude, longitude } = res.data.data;
         setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
         console.log("Updated Map Center:", latitude, longitude);
@@ -322,3 +322,5 @@ function Map() {
 }
 
 export default Map;
+
+
