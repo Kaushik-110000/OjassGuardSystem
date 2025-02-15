@@ -51,6 +51,17 @@ export class LocationService {
       throw error;
     }
   }
+
+  async checkAvailability(guardId) {
+    try {
+      const res = await axios.get(
+        `${server.serverUrl}/location/getLatestAssignment/${guardId}`
+      );
+      if (res) return res;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 const locationservice = new LocationService();
 export default locationservice;

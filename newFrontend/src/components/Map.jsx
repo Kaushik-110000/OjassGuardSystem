@@ -188,6 +188,15 @@ function Map() {
     }
   };
 
+  const handleCheckAvailability = async () => {
+    try {
+      const res = await locationservice.checkAvailability(selectedGuard._id);
+      console.log(res);
+    } catch (error) {
+      console.error("Error checking availability:", error);
+    }
+  };
+
   return (
     <div className="flex items-center w-full min-h-screen gap-10 bg-black py-6 px-16">
       <div className=" w-[60vw] flex flex-col justify-center items-center">
@@ -271,7 +280,7 @@ function Map() {
         </div>
         <div className="flex items-center justify-center mt-4 p-2 gap-4 w-md bg-black/80 rounded-lg">
           <div className="w-full max-w-md rounded-lg shadow-lg p-2 text-xs font-bold">
-            <label>From Time :  </label>
+            <label>From Time : </label>
             <input
               type="datetime-local"
               value={from}
@@ -291,7 +300,14 @@ function Map() {
             className="bg-green-600 w-40 text-white rounded-lg hover:bg-green-700"
             onClick={handleFinalSubmit}
           >
-            ✅  Submit
+            Submit
+          </button>
+
+          <button
+            className="bg-green-600 w-40 text-white rounded-lg hover:bg-green-700"
+            onClick={handleCheckAvailability}
+          >
+            Available
           </button>
         </div>
 
